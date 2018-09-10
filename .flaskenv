@@ -1,0 +1,2 @@
+FLASK_APP=gradget.py
+FLASK_DEBUG=1
