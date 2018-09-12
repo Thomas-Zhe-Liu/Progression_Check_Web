@@ -10,7 +10,7 @@ code_soup = BeautifulSoup(program_codes.content, 'html.parser')
 
 #//TODO define db insert functions for these classes
 class Course:
-    def __init__(self, course_code, course_name, t1, t2, t3, prereqs, flex):
+    def __init__(self, course_code, course_name, t1, t2, t3, prereqs, exclusions, flex):
         self.code = course_code
         self.name = course_name
         self.t1 = t1
@@ -40,7 +40,6 @@ def get_major_links():
     ret_list = []
     headers = prog_soup.find_all("h4", {"data-hbui" : "readmore__heading"}, text=re.compile("Majors"))
     for header in headers:
-        print(header.text)
         content = header.find_next("div", class_="m-accordion")
         # some programs don't list any content - e.g. heading 'Double major' in Commerce
         if content is None:
@@ -68,13 +67,15 @@ def get_majors(major_links):
         # get major info
         major_name = major_soup.find("span", {"data-hbui" : "module-title"}).text
         major_code = major_soup.find("strong", class_="code").text
-        ret_list.append(Major(major_code, major_name, 0, 0, 0, []))
+        major_core_links = get_core_links(major_soup)
+        major_cores = get_courses(major_core_links, False)
+        ret_list.append(Major(major_code, major_name, 0, 0, 0, major_cores))
 
     return ret_list
 
-def get_core_links():
+def get_core_links(soup):
     ret_list = []
-    core_course_headers = prog_soup.find_all("h4", {"data-hbui" : "readmore__heading"}, text=re.compile('Core Courses'))
+    core_course_headers = soup.find_all("h4", {"data-hbui" : "readmore__heading"}, text=re.compile(r'Core Courses?'))
     for header in core_course_headers:
         # Check if they're flexi cores - e.g. commerce
         if re.match(r'^Flex', header.text):
@@ -94,23 +95,130 @@ def get_core_links():
             print("Cores are not mandatory - they're conditional on major")
             continue
 
-        course_list = core_courses.find("div", {"data-hbui" : "course-list"}).find_all("div", recursive=False)
-        for course in course_list:
-            '''
-            course_data = course.find("a")['aria-label'].replace('\n', '').split(",")
-            course_code = course_data[0].split(":")[1].replace(' ', '')
-            course_name = course_data[1].split(".")[0].strip()
-            print("Course code: %s" % course_code)
-            print("Course name: %s" % course_name)
-            '''
-            ret_list.append(hb_base + course.find("a")['href'].strip())
+        course_lists = core_courses.find_all("div", {"data-hbui" : "course-list"})
+        for course_list in course_lists:
+            for course in course_list.find_all("div", recursive=False):
+                ret_list.append(hb_base + course.find("a")['href'].strip())
 
     return ret_list
 
+def merge(str1, str2):
+    ret_str = ''
+    first_insert = True
+    prereqs = []
+    groups1 = str1.split(')')
+    groups2 = str2.split(')')
+
+    # match all groups in group1 with all groups in group2
+    for group1 in groups1:
+        # split sometimes returns empty strings
+        if not group1:
+            continue
+
+        # remove leading and and or's
+        group1 = re.sub(r'^[^\(]*', '', group1)
+
+        for group2 in groups2:
+            # split sometimes returns empty strings
+            if not group2:
+                continue
+
+            # remove leading and and or's
+            group2 = re.sub(r'^[^\(]*', '', group2)
+            #//TODO can remove
+            group2 = re.sub(r'^\(', '', group2)
+            if (first_insert):
+                ret_str = group1 + " and " + group2 + ')'
+                first_insert = False
+            else:
+                ret_str = ret_str + ' or ' + group1 + ' and ' + group2 + ')'
+
+    return ret_str
+
+def parse_prereqs(prerequisites):
+    '''
+        Take the UNSW prereq string from handbook and return
+        list of prereqs in form
+        [[course1, course2],[course3], [course4]]
+        where in list commas are AND, while out of list
+        commas are OR
+    '''
+    
+    prereqs = []
+    braces = False
+    # check if there are groups - groups are split up by commas or braces
+    if (re.match(r'^Prerequisites?:\s*\(', prerequisites)):
+        # using braces
+        braces = True
+        groups = prerequisites.split(')')
+    else:
+        # using commas
+        groups = prerequisites.split(',')
+
+    # empty lists ruin things
+    groups = list(filter(None, groups))
+
+    if (len(groups) == 1):
+        # no groups - just list like a and b and c
+        codes = re.findall(r'[A-Z]{4}\d{4}', prerequisites)
+        if (re.search(r'or', prerequisites)):
+            # or list
+            for code in codes:
+                prereqs.append([code])
+        else:
+            # and list
+            and_list = []
+            for code in codes:
+                and_list.append(code)
+            prereqs.append(and_list)
+
+    else:
+        ''' groups could be 'or' groups or 'and' groups
+        and groups can go straight into list, but or
+        groups need to be manipulated to become and groups'''
+
+        # group type determined by link word, which is first seen in group 2
+        group_link = re.search(r'^\s*(\w+)', groups[1]).group(1)
+        if group_link == "and":
+            '''
+            they're using or groups - this is tricky
+            thank god I took discrete math to turn
+            (A or B) AND C into 
+            (A AND C) OR (B AND C)
+            i.e. convert or groups to and groups
+            '''
+            # parenthesize properly for the merge
+            if braces:
+                for i in range(len(groups)):
+                    groups[i] = groups[i].replace("(", "")
+                    groups[i] = re.sub(r'([A-Z]{4}\d{4})', r'(\1)', groups[i])
+            else:
+                prerequisites = re.sub(r'([A-Z]{4}\d{4})', r'(\1)', prerequisites)
+                groups = prerequisites.split(",")
+
+            for i in range(len(groups)-1):
+                new_group = merge(groups[0], groups[1])
+                groups.pop(0)
+                groups.pop(0)
+                groups.insert(0, new_group)
+
+            groups = groups[0].split(')')
+            # empty lists ruin things
+            groups = list(filter(None, groups))
+
+        # using and groups - easy, can put straight into prereqs
+        for group in groups:
+            and_group = []
+            for code in re.findall(r'[A-Z]{4}\d{4}', group):
+                and_group.append(code)
+            prereqs.append(and_group)
+    
+    return prereqs
+
 def get_courses(course_links, flex):
     '''
-        Take in list of links to core pages
-        Return list of core objects
+        Take in list of links to coursre pages
+        Return list of course objects
     '''
 
     ret_list = []
@@ -121,8 +229,14 @@ def get_courses(course_links, flex):
         # get course info
         course_name = course_soup.find("span", {"data-hbui" : "module-title"}).text
         course_code = course_soup.find("strong", class_="code").text
-        #//TODO get course data e.g. prereqa
-        ret_list.append(Course(course_code, course_name, 0, 0, 0, [], flex))
+        conditions = course_soup.find("div", id='SubjectConditions')
+        prereqs = [[]]
+        if conditions is not None:
+            prerequisites = conditions.find("div", text=re.compile(r'^Prerequisite:'))
+            if prerequisites is not None:
+                prereqs = parse_prereqs(prerequisites.text)
+
+        ret_list.append(Course(course_code, course_name, 0, 0, 0, prereqs, [], flex))
 
     return ret_list
 
@@ -189,11 +303,12 @@ for table in code_soup.find_all("table"):
 
         # check if there are program wide core courses
         # assume all courses found here are mandatory for the program
-        core_links = get_core_links()
+        core_links = get_core_links(prog_soup)
         cores = get_courses(core_links, False)
         for core in cores:
             print("Core code: %s" % core.code)
             print("Core name: %s" % core.name)
+            #print("Course prerequisites: %s" % ','.join(map(str, core.prereqs)))
         
         # check if there are flex courses e.g. commerce
         flex_links = get_flex_links(prog)
@@ -208,4 +323,13 @@ for table in code_soup.find_all("table"):
         for major in majors:
             print("Major code: %s" % major.code)
             print("Major name: %s" % major.name)
+            print("Major cores: ")
+            for core in major.cores:
+                print("Core code: %s" % core.code)
+                print("Core name: %s" % core.name)
+                print("Core prerequisites:", end='')
+                if not core.prereqs:
+                    continue
+
+                print(core.prereqs)
     break
