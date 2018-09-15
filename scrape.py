@@ -1,12 +1,29 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+import sqlite3
 
 # get all UNSW program codes from this UNSW website
 hb_base = "https://www.handbook.unsw.edu.au"
 hb_program_base = hb_base + "/undergraduate/programs/2019/"
+hb_code_base = hb_base + "undergraduate/courses/2019/"
 program_codes = requests.get("http://www.gettingstarted.unsw.edu.au/uac-codes-and-corresponding-unsw-undergraduate-program-codes");
 code_soup = BeautifulSoup(program_codes.content, 'html.parser')
+
+# list of programs to insert into db
+Programs = {}
+# list of majors to insert into db
+Majors = {} 
+# list of courses to insert into db
+Courses = {}
+
+def change_db(command, payload=None):
+    """Execute command (with given payload, if any) in given database."""
+    connection = sqlite3.connect('Gradget.db')
+    cursor = connection.cursor()
+    cursor.execute(command, payload)
+    connection.commit()
+    connection.close()
 
 #//TODO define db insert functions for program class
 class Program:
@@ -15,20 +32,21 @@ class Program:
         self.name = prog_name
         self.year = commence_yr
         self.flex = flex_uoc
-        # list of class major
+        # list of major codes
         self.majors = majors
-        # list of class course
+        # list of core codes
         self.cores = core_courses
 
 class Major:
-    def __init__(self, major_code, major_name, lv3, lv2, lv1, core_courses):
+    def __init__(self, major_code, major_name, lv3, lv2, lv1, core_courses, prog_code):
         self.code = major_code
         self.name = major_name
         self.lv3 = lv3
         self.lv2 = lv2
         self.lv1 = lv1
-        # list of class course
+        # list of course codes
         self.cores = core_courses
+        self.prog = prog_code
 
 class Course:
     def __init__(self, course_code, course_name, t1, t2, t3, summer, prereqs, exclusions, flex):
@@ -49,17 +67,21 @@ def get_major_links(soup):
         content = header.find_next("div", class_="m-accordion")
         # some programs don't list any content - e.g. heading 'Double major' in Commerce
         if content is None:
-            return None
+            continue
 
         # need to find the 'course list' that actually has data - some are empty
         major_lists = content.find_all("div", {"data-hbui" : "course-list"})
         for major_list in major_lists:
             for major in major_list.find_all("div", recursive=False):
+                if re.search(r'minor', major['data-hbui-filter-item'], re.I) is not None:
+                    # sometimes they list minors which is dumb
+                    continue
+
                 ret_list.append(hb_base + major.find("a")['href'].strip())
 
     return ret_list
 
-def get_majors(major_links):
+def get_majors(major_links, prog_code):
     '''
         Take in list of links to major pages
         Return list of major objects
@@ -70,12 +92,17 @@ def get_majors(major_links):
         # go to major page
         major_page = requests.get(major_link);
         major_soup = BeautifulSoup(major_page.content, 'html.parser')
-        # get major info
-        major_name = major_soup.find("span", {"data-hbui" : "module-title"}).text
+        # check if major already in dictionary
         major_code = major_soup.find("strong", class_="code").text
+        ret_list.append(major_code)
+        if major_code in Majors:
+            continue
+
+        # get info
+        major_name = major_soup.find("span", {"data-hbui" : "module-title"}).text
         major_core_links = get_core_links(major_soup)
         major_cores = get_courses(major_core_links, False)
-        ret_list.append(Major(major_code, major_name, 0, 0, 0, major_cores))
+        Majors[major_code] = Major(major_code, major_name, 0, 0, 0, major_cores, prog_code)
 
     return ret_list
 
@@ -91,7 +118,7 @@ def get_core_links(soup):
         core_courses = header.find_next("div", class_="m-accordion")
         # some programs don't list cores - just have info e.g. last box of prog 3475
         if core_courses is None:
-            return None
+            continue
 
         # check if they're conditional core courses i.e. specific to a 
         # major but for some reason on the program site- e.g. program 3475
@@ -296,17 +323,25 @@ def parse_prereqs(prerequisites):
 def get_courses(course_links, flex):
     '''
         Take in list of links to coursre pages
-        Return list of course objects
+        Return list of course codes
+        Append courses Courses list to be inserted into db
+        if not already there
     '''
 
     ret_list = []
     for course_link in course_links:
+        # check if this course is already in the courses dictionary
+        course_code = re.search(r'([A-Z]{4}\d{4})', course_link).group(1)
+        ret_list.append(course_code)
+        if course_code in Courses:
+            # already have this course object in the dict
+            continue
+
         # go to course page
         course_page = requests.get(course_link);
         course_soup = BeautifulSoup(course_page.content, 'html.parser')
         # get course info
         course_name = course_soup.find("span", {"data-hbui" : "module-title"}).text
-        course_code = course_soup.find("strong", class_="code").text
         conditions = course_soup.find("div", id='SubjectConditions')
         prereqs = [[]]
         excluded = []
@@ -331,7 +366,8 @@ def get_courses(course_links, flex):
 
         # get terms offered
         terms = get_terms(course_soup)
-        ret_list.append(Course(course_code, course_name, terms[0], terms[1], terms[2], terms[3], prereqs, excluded, flex))
+        #ret_list.append(Course(course_code, course_name, terms[0], terms[1], terms[2], terms[3], prereqs, excluded, flex))
+        Courses[course_code] = Course(course_code, course_name, terms[0], terms[1], terms[2], terms[3], prereqs, excluded, flex)
 
     return ret_list
 
@@ -354,8 +390,9 @@ def get_flex_links(program):
 
     return ret_list
 
-i = 0
+testing = [3778, 3707]
 for table in code_soup.find_all("table"):
+
     # check the table's first column is "UAC Code"
     # Assume it's the correct table if it is
     check_table = table.find("tr").find("td");
@@ -366,19 +403,21 @@ for table in code_soup.find_all("table"):
         continue
 
     # Iterate through all program codes
-    i = 0
     for row in table.find_all("tr"):
-        if i > 0:
-            break
-        i = i + 1
-
         prog_code = row.find_all("td")[1].text.strip().replace(" ", "")
-        prog_code = "3502"
         # check it's 4 digits
         if not re.match(r'\d{4}', prog_code):
             continue
 
         print(prog_code)
+
+        # check we haven't already scraped this program
+        if prog_code in Programs:
+            continue
+
+        #TODO remove here
+        if prog_code not in testing:
+            continue
 
         # go to program handbook site
         program = requests.get(hb_program_base + prog_code)
@@ -401,46 +440,83 @@ for table in code_soup.find_all("table"):
         core_links = get_core_links(prog_soup)
         prog.cores = get_courses(core_links, False)
         for core in prog.cores:
-            print("Core code: %s" % core.code)
-            print("Core name: %s" % core.name)
+            print("Program core code: %s" % core)
             #print("Course prerequisites: %s" % ','.join(map(str, core.prereqs)))
         
         # check if there are flex courses e.g. commerce
         flex_links = get_flex_links(prog)
         flex = get_courses(flex_links, True)
-        for f in flex:
-            print("Flex code: %s" % f.code)
-            print("Flex name: %s" % f.name)
+        if flex:
+            prog.cores = prog.cores + flex
+            for f in flex:
+                print("Flex code: %s" % f)
 
         # go to program majors to find program specific cores
         major_links = get_major_links(prog_soup)
-        prog.majors = get_majors(major_links)
+        prog.majors = get_majors(major_links, prog_code)
+
+        # queue this program to be inserted into db
+        Programs[prog_code] = prog
+        '''
         for major in prog.majors:
-            print("Major code: %s" % major.code)
-            print("Major name: %s" % major.name)
+            # get major object
+            major_obj = Majors[major]
+            print("Major code: %s" % major)
+            print("Major name: %s" % major_obj.name)
             print("Major cores: ")
-            for core in major.cores:
-                print("Core code: %s" % core.code)
-                print("Core name: %s" % core.name)
-                if not core.prereqs:
+            for core in major_obj.cores:
+                # get the course object
+                course_obj = Courses[core]
+                print("Core code: %s" % core)
+                print("Core name: %s" % course_obj.name)
+                if not course_obj.prereqs:
                     print("No prereqs")
                     continue
                 print("Core prerequisites:", end='')
-                print(core.prereqs)
-                if not core.exclusions:
+                print(course_obj.prereqs)
+                if not course_obj.exclusions:
                     print("No excluded courses")
                 else:
                     print("Excluded courses", end='')
-                    print(core.exclusions)
+                    print(course_obj.exclusions)
 
                 print("Offered in ", end='')
-                if core.t1:
+                if course_obj.t1:
                     print("t1 ", end='')
-                if core.t2:
+                if course_obj.t2:
                     print("t2 ", end='')
-                if core.t3:
+                if course_obj.t3:
                     print("t3 ", end='')
-                if core.summer:
+                if course_obj.summer:
                     print("summer ", end='')
                 print()
-    break
+        '''
+
+# insert into db
+for key in Programs:
+    curr_prog = Programs[key]
+    # insert program
+    command = "INSERT INTO PROGRAM (program_code, commence_year, program_name, flexi_core_course) VALUES (?,?,?,?)"
+    payload = [(curr_prog.code, curr_prog.year, curr_prog.name, curr_prog.flex)]
+    change_db(command, payload)
+    # insert bridge to core courses
+    #//TODO flex
+    for core in curr_prog.cores:
+        command = "INSERT INTO CORE_COURSE (course_code, program_code, commence_year, is_flexi) VALUES (?,?,?,?)"
+        payload = [(core, curr_prog.code, curr_prog.year, 0)]
+        change_db(command, payload)
+
+for key in Majors:
+    curr_major = Majors[key]
+    command = "INSERT INTO MAJOR (major_code, major_name, lv1elective, lv2elective, lv3elective, program_code, commence_year) VALUES(?,?,?,?,?,?,?)"
+    payload = [(curr_major.code, curr_major.name, curr_major.lv1, curr_major.lv2, curr_major.lv3, curr_major.prog_code, '2019')]
+    change_db(command, payload)
+    for core in curr_major.cores:
+        command = "INSERT INTO MAJOR_REQUIRED_COURSE(major_code, course_code) VALUES (?,?)" 
+        payload = [(curr_major.code, core)]
+        change_db(command, payload)
+
+for course in Courses:
+    command = "INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer) VALUES (?,?,?,?,?,?,?)"
+    payload = [(course.code, course.name, course.t1, course.t2, course.t3, course.summer)]
+    change_db(command, payload)
