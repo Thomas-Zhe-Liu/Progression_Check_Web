@@ -151,7 +151,7 @@ def get_excluded(soup):
     return ret_list
 
 def get_terms(soup):
-    ret_list = [False, False, False, False]
+    ret_list = [0, 0, 0, 0]
     terms = soup.find("div", class_="o-attributes-table").find_all("div", recursive=False)[3].find("p").text
     # assume csv
     terms = terms.split(",")
@@ -160,9 +160,9 @@ def get_terms(soup):
         if term_num is None:
             # could be summer term
             if re.search(r'summer', term, re.I):
-                ret_list[3] = True
+                ret_list[3] = 1
         else:
-            ret_list[int(term_num.group(1))-1] = True
+            ret_list[int(term_num.group(1))-1] = 1
 
     return ret_list
 
@@ -317,7 +317,7 @@ def parse_prereqs(prerequisites):
             for code in re.findall(r'[A-Z]{4}\d{4}', group):
                 and_group.append(code)
             prereqs.append(and_group)
-    
+
     return prereqs
 
 def get_courses(course_links, flex):
@@ -390,7 +390,7 @@ def get_flex_links(program):
 
     return ret_list
 
-testing = [3778, 3707]
+testing = ['3778']
 for table in code_soup.find_all("table"):
 
     # check the table's first column is "UAC Code"
@@ -429,8 +429,8 @@ for table in code_soup.find_all("table"):
             continue
 
         # get program name
-        prog_name = prog_soup.find("span", {"data-hbui" : "module-title"})
-        print("On handbook page for program code %s, name %s" % (prog_code, prog_name.text))
+        prog_name = prog_soup.find("span", {"data-hbui" : "module-title"}).text
+        print("On handbook page for program code %s, name %s" % (prog_code, prog_name))
 
         # create new program object
         prog = Program(prog_code, prog_name, 2019, 0, [], [])
@@ -497,26 +497,41 @@ for key in Programs:
     curr_prog = Programs[key]
     # insert program
     command = "INSERT INTO PROGRAM (program_code, commence_year, program_name, flexi_core_course) VALUES (?,?,?,?)"
-    payload = [(curr_prog.code, curr_prog.year, curr_prog.name, curr_prog.flex)]
+    payload = (curr_prog.code, curr_prog.year, curr_prog.name, curr_prog.flex)
     change_db(command, payload)
     # insert bridge to core courses
     #//TODO flex
     for core in curr_prog.cores:
-        command = "INSERT INTO CORE_COURSE (course_code, program_code, commence_year, is_flexi) VALUES (?,?,?,?)"
-        payload = [(core, curr_prog.code, curr_prog.year, 0)]
+        command = "INSERT INTO CORE_COURSE (course_code, program_code, commence_year, is_flexi) VALUES(?,?,?,?)"
+        payload = (core, curr_prog.code, curr_prog.year, 0)
         change_db(command, payload)
 
 for key in Majors:
     curr_major = Majors[key]
     command = "INSERT INTO MAJOR (major_code, major_name, lv1elective, lv2elective, lv3elective, program_code, commence_year) VALUES(?,?,?,?,?,?,?)"
-    payload = [(curr_major.code, curr_major.name, curr_major.lv1, curr_major.lv2, curr_major.lv3, curr_major.prog_code, '2019')]
+    payload = (curr_major.code, curr_major.name, curr_major.lv1, curr_major.lv2, curr_major.lv3, curr_major.prog, '2019')
     change_db(command, payload)
     for core in curr_major.cores:
         command = "INSERT INTO MAJOR_REQUIRED_COURSE(major_code, course_code) VALUES (?,?)" 
-        payload = [(curr_major.code, core)]
+        payload = (curr_major.code, core)
         change_db(command, payload)
 
-for course in Courses:
-    command = "INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer) VALUES (?,?,?,?,?,?,?)"
-    payload = [(course.code, course.name, course.t1, course.t2, course.t3, course.summer)]
+for key in Courses:
+    curr_course = Courses[key]
+    command = "INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer) VALUES(?,?,?,?,?,?)"
+    payload = (curr_course.code, curr_course.name, curr_course.t1, curr_course.t2, curr_course.t3, curr_course.summer)
     change_db(command, payload)
+    for excluded in curr_course.exclusions:
+        command = "INSERT INTO EXCLUDE (course_code, program_code, commence_year, replaced_course, group_id) VALUES(?,?,?,?,?)"
+        #//TODO Thomas - don't need program info
+        payload = (curr_course.code, 0, '2019', excluded, 0)
+        change_db(command, payload)
+    i = 0
+    for prereq_group in curr_course.prereqs:
+        #//TODO this in here because of COMP3331
+        prereq_group = list(set(prereq_group))
+        for prereq in prereq_group:
+            command = "INSERT INTO PREREQUISITE (course_code, program_code, commence_year, prerequisite_course, group_id) VALUES(?,?,?,?,?)"
+            payload = (curr_course.code, 0, '2019', prereq, i)
+            change_db(command, payload)
+        i = i + 1
