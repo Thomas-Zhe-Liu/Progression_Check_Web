@@ -1,5 +1,6 @@
 from app import app
 from flask import Flask, redirect, render_template, request, url_for
+import core_course
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -9,7 +10,6 @@ def index():
 		commence_year = int(request.form["commence_year"])
 		major = request.form["major"]
 		#check if all the form is selected
-		print("hello " + str(commence_year))
 		return redirect(url_for("step2", program_code=program_code, commence_year=commence_year, major=major))
 	return render_template('index.html')
 
