@@ -30,10 +30,10 @@ def get_remaining_cores(program_code, commence_year, courses_have_done):
 
 	return remaining_courses
 
-
+'''
 ##MATH1131, MATH1231, COMP1917 in db for program 3978, 2016, expected outcome is MATH1231
 results = get_remaining_cores('COMP3978', 2016, ['MATH1131', 'COMP1917'])
 for r in results:
 	print(r)
-
+'''
 

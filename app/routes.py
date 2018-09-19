@@ -1,11 +1,10 @@
 from app import app
 from flask import Flask, redirect, render_template, request, url_for
-import core_course
+from core_course import *
+from program import *
 
 #@app.route("/", methods=["GET", "POST"])
 @app.route('/')
-
-@app.route('/index')
 def index():
     return render_template('index.html')
 
@@ -21,7 +20,8 @@ def index():
 
 @app.route('/step1')
 def step1():
-    return render_template('step1.html')
+	all_programs = get_all_programs_code_name()
+	return render_template('step1.html',all_programs = all_programs)
 
 @app.route('/step2')
 def step2():

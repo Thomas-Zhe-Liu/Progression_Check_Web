@@ -43,7 +43,9 @@
           <div class="form-group">
             <label for="exampleFormControlSelect1">Find and select your current program or degree by using the dropdown below.</label>
             <select class="form-control" id="exampleFormControlSelect1">
-              
+              {% for program in all_programs %}
+              <option>{{program[0]}} {{program[1]}}</option>
+              {% endfor %}         
             </select>
           </div>
 
