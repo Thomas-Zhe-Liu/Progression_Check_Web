@@ -38,11 +38,11 @@
       </div>
 
       <div class="col-lg-8">
-        <form>
+      <form method="POST" role="form">
           <h4>1. Select your Program/Degree</h4>
           <div class="form-group">
             <label for="exampleFormControlSelect1">Find and select your current program or degree by using the dropdown below.</label>
-            <select class="form-control" id="exampleFormControlSelect1">
+            <select class="form-control" id="exampleFormControlSelect1" name="program">
               {% for program in all_programs %}
               <option>{{program[0]}} {{program[1]}}</option>
               {% endfor %}         
@@ -51,7 +51,7 @@
 
           <h4>2. Select the year you started your Program.</h4>
           <div class="form-group">
-            <select class="form-control" id="exampleFormControlSelect1">
+            <select class="form-control" id="exampleFormControlSelect1" name="c_year">
               <option>2015</option>
               <option>2016</option>
               <option>2017</option>
@@ -62,12 +62,14 @@
 
           <h4>3. Select your Major.</h4>
           <div class="form-group">
-            <select class="form-control" id="exampleFormControlSelect1">
-              
+            <select class="form-control" id="exampleFormControlSelect1" name="major">
+              {% for major in all_majors %}
+              <option>{{major[0]}} {{major[1]}}</option>
+              {% endfor %}      
             </select>
           </div>
+          <input type="submit" class= "btn btn-primary pull-right" value="Submit"/>
         </form>
-        <a class="btn btn-primary pull-right" href="/step2" role="button">Continue</a>
       </div>    
     </div>
   </div>
