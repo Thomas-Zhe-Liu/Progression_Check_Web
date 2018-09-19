@@ -25,17 +25,17 @@
   </nav>
 </head>
 <body>
-  <h1> Program_code: {{program_code}}, (Commence Year: {{commence_year}} Major: {{major}}) </h1>
 
+ 
 
-  <h1 class="text-center"> <small clss="text-muted">Progression Check</h1>
+  <h1 class="text-center"> <small clss="text-muted">Progression Check</small></h1><small clss="text-muted">
 
   <div class="container">
     <div class="row">
       <div class="col-lg-4">
         <div class="list-group">
-          <button type="button" class="list-group-item list-group-item-action active">Step 1: Select your program</button>
-          <button type="button" class="list-group-item list-group-item-action">Step 2: Select your courses</button>
+          <button type="button" class="list-group-item list-group-item-action">Step 1: Select your program</button>
+          <button type="button" class="list-group-item list-group-item-action active">Step 2: Select your courses</button>
           <button type="button" class="list-group-item list-group-item-action">Step 3: View your progression report</button>
         </div>
       </div>
@@ -44,14 +44,18 @@
         <form class="bd-example">
   <fieldset>
     <legend>1. Select your Courses</legend>
-    <p>
-      <label for="input">Search the courses that you've completed and add them to the list below.</label>
-      <input id="input" placeholder="Search course" type="text">
-      <button type="submit" class="btn btn-success">Add</button>
-    </p>
+  
+  <form class="navbar-form navbar-left" role="search">
+  <label for="input">Search the courses that you've completed and add them to the list below.</label>
+  <div class="form-group">
+    
+    <input class="form-control" placeholder="Search for Courses" type="text">
+  </div>
+  <button type="submit" class="btn btn-success">Add</button>
+</form>
   </fieldset>
   <div class="table-responsive">
-  <table class="table">
+<table class="table">
     <caption>List of Completed Courses</caption>
   <thead>
     <tr>
@@ -66,55 +70,57 @@
       <th scope="row">6</th>
       <td>COMP1511</td>
       <td>Introduction to Programming</td>
-      <button type="button" class="btn btn-outline-danger">Remove</button>
+      <td><button type="button" class="btn btn-outline-danger">Remove</button></td>
     </tr>
     <tr>
       <th scope="row">6</th>
       <td>COMP2521</td>
       <td>Data Structures and Algorithms</td>
-      <button type="button" class="btn btn-outline-danger">Remove</button>
+      <td><button type="button" class="btn btn-outline-danger">Remove</button></td>
     </tr>
     <tr>
       <th scope="row">6</th>
       <td>MATH1081</td>
       <td>Data Structures and Algorithms</td>
-      <button type="button" class="btn btn-outline-danger">Remove</button>
+      <td><button type="button" class="btn btn-outline-danger">Remove</button></td>
     </tr>
     <tr>
       <th scope="row">6</th>
       <td>MATH1131</td>
       <td>Mathematics 1A</td>
-      <button type="button" class="btn btn-outline-danger">Remove</button>
+      <td><button type="button" class="btn btn-outline-danger">Remove</button></td>
     </tr>
   <tr>
       <th scope="row">6</th>
       <td>MATH1231</td>
       <td>MATH1231 Mathematics 1B</td>
-      <button type="button" class="btn btn-outline-danger">Remove</button>
+      <td><button type="button" class="btn btn-outline-danger">Remove</button></td>
     </tr>
     <tr>
       <th scope="row">6</th>
       <td>COMP2521</td>
       <td>Data Structures and Algorithms</td>
-      <button type="button" class="btn btn-outline-danger">Remove</button>
+      <td><button type="button" class="btn btn-outline-danger">Remove</button></td>
     </tr>
     <tr>
       <th scope="row">6</th>
       <td>COMP2041</td>
       <td>Software Construction</td>
-      <button type="button" class="btn btn-outline-danger">Remove</button>
+      <td><button type="button" class="btn btn-outline-danger">Remove</button></td>
     </tr>
     <tr>
       <th scope="row">6</th>
       <td>COMP2911</td>
       <td>Eng. Design in Computing</td>
-      <button type="button" class="btn btn-outline-danger">Remove</button>
+      <td><button type="button" class="btn btn-outline-danger">Remove</button></td>
     </tr>
   </tbody>
   </table>
 </div>
-      </div>    
+          <a class="btn btn-primary" href="/step1" role="button">Previous</a>
+          <a class="btn btn-success" href="/step3" role="button">Save & Continue</a>
+      </form></div>    
     </div>
   </div>
-</body>
-</html>
+
+</small></body></html>
