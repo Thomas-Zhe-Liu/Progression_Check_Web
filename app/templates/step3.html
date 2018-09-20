@@ -123,9 +123,10 @@
     </tr>
   </thead>
   <tbody>
+    {% for course in remaining_core_all_info %}
     <tr>
-      <th scope="row">COMP4920</th>
-      <td>Management and Ethics</td>
+      <th scope="row">{{course[0]}}</th>
+      <td>{{course[1]}}</td>
       <td>6</td>
       <td>
         <span class="badge badge-success">Sem1</span>
@@ -135,7 +136,8 @@
       </td>
       <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
 </tr>
-  <tr>
+    {% endfor %}  
+  <!--<tr>
       <th scope="row">COMP3431</th>
       <td>Robotic Software Architecture</td>
       <td>6</td>
@@ -196,7 +198,7 @@
       </td>
       <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
 </tr>
-  
+-->
   </tbody>
   </table>
 </div>

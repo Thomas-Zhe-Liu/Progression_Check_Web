@@ -50,23 +50,35 @@ def step2(program_code, commence_year, major):
 				selected_courses_code.append(program_code)
 		#this post request is to progress tos step 3 after all the courses have done are input
 		if request.form["submit"] == "continue":
-			return redirect(url_for("step3", program_code=program_code, commence_year=commence_year, major=major, selected_courses_code_name = selected_courses_code_name))
+			list_separated = '-'.join(selected_courses_code)
+			return redirect(url_for("step3", program_code=program_code, commence_year=commence_year, major=major))
 	# selected_courses_code_name append code and course_name
 	for code in selected_courses_code:
 		course_name = get_course_by_course_code(code)[1]
 		# check if the same tuple is alreday inserted, need to justify later
 		if [code, course_name] not in selected_courses_code_name:
 			selected_courses_code_name.append([code, course_name])
-		
-	
+			
 	return render_template('step2.html', program_code = program_code, commence_year = commence_year, major = major, selected_courses_code_name = selected_courses_code_name)
 
 
 
 
-@app.route('/step3/<program_code>/<commence_year>/<major>/<selected_courses_code_name>')
-def step3(program_code, commence_year, major, selected_courses_code_name):
-	return render_template('step3.html', program_code = program_code, commence_year = commence_year, major = major, selected_courses_code_name = selected_courses_code_name)
+@app.route('/step3/<program_code>/<commence_year>/<major>', methods=["GET", "POST"])
+def step3(program_code, commence_year, major):
+	#cse is a bit special in terms of prgram structure, need to address this later
+	remaining_core_all_info = []
+	if program_code == "3778":
+		#get all the remaining course code
+		remaining_required_courses = cse_get_remaining_cores(program_code, commence_year, major, selected_courses_code)
+		#get all the remaining course code
+		for course_code in remaining_required_courses:
+			c = get_course_by_course_code(course_code)
+			remaining_core_all_info.append(c)
+
+		
+				
+	return render_template('step3.html', program_code = program_code, commence_year = commence_year, major = major, remaining_core_all_info = remaining_core_all_info)
 
 # @app.route("/step2/<program_code>/<commence_year>/<major>", methods=["GET", "POST"])
 # def step2(program_code, commence_year, major):

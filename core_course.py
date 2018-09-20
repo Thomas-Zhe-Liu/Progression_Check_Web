@@ -23,7 +23,7 @@ for r in results:
 	print(r)
 
 '''
-#pass, program_code, commence_year and courses_have_done to return a list of core_courses that should be dont later
+#pass, program_code, commence_year and courses_have_done(course_code) to return a list of core_courses that should be dont later
 def cse_get_remaining_cores(program_code, commence_year, major_code, courses_have_done):
 	all_courses = cse_get_core_courses(major_code, commence_year)
 	#make a copy of the list and delete teh ones that have be done
