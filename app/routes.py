@@ -1,5 +1,6 @@
 from app import app
 from flask import Flask, redirect, render_template, request, url_for
+from course import *
 from core_course import *
 from program import *
 from major import *
@@ -34,10 +35,24 @@ def step1():
 	all_majors = get_majors_of_a_program(3778, 2019)
 	return render_template('step1.html', all_programs = all_programs, all_majors = all_majors)
 
+
+
 @app.route('/step2/<program_code>/<commence_year>/<major>', methods=["GET", "POST"])
 def step2(program_code, commence_year, major):
-	print(program_code + " " + str(commence_year) + " " + major)
-	return render_template('step2.html', program_code = program_code, commence_year = commence_year, major = major)
+	selected_courses_code = []
+	selected_courses_code_name = []
+	#if request.request.method == "POST":
+	#	return redirect(url_for("step2"))
+	#selected_courses_code_name append code and course_name
+	for code in selected_courses_code:
+		course_name = get_course_by_course_code(code)[1]
+		selected_courses_code_name.append([code, course_name])
+		
+	
+	return render_template('step2.html', program_code = program_code, commence_year = commence_year, major = major, selected_courses_code_name = selected_courses_code_name)
+
+
+
 
 @app.route('/step3')
 def step3():

@@ -66,15 +66,17 @@
         <form class="bd-example">
   <fieldset>
     <legend>1. Select your Courses</legend>
-  
-  <form class="navbar-form navbar-left" role="search">
-  <label for="input">Search the courses that you've completed and add them to the list below.</label>
-  <div class="form-group">
-    
-    <input class="form-control" placeholder="Search for Courses" type="text">
-  </div>
-  <button type="submit" class="btn btn-success">Add</button>
-</form>
+  <form method="POST" role="form"> 
+    <form class="navbar-form navbar-left" role="search">
+    <label for="input">Search the courses that you've completed and add them to the list below.</label>
+    <div class="form-group">   
+      <input class="form-control" placeholder="Search for Courses" type="text">
+    </div>
+    <!-- <button type="submit" class="btn btn-success">Add</button> -->
+    <input type="submit" class= "btn btn-primary pull-right" value="Add"/>
+  </form>
+
+</form method="POST" role="form">
   </fieldset>
   <div class="table-responsive">
 <table class="table">
@@ -88,7 +90,15 @@
     </tr>
   </thead>
   <tbody>
+    {% for course in selected_courses_code_name %}
     <tr>
+      <th scope="row">6</th>
+      <td>{{course[0]}}</td>
+      <td>{{course[1]}}</td>
+      <td><button type="button" class="btn btn-outline-danger">Remove</button></td>
+    </tr>
+    {% endfor %}  
+    <!--<tr>
       <th scope="row">6</th>
       <td>COMP1511</td>
       <td>Introduction to Programming</td>
@@ -135,13 +145,13 @@
       <td>COMP2911</td>
       <td>Eng. Design in Computing</td>
       <td><button type="button" class="btn btn-outline-danger">Remove</button></td>
-    </tr>
+    </tr> -->
   </tbody>
   </table>
 </div>
 <!--           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#previousAlertModal">Previous</button> -->
           <a class="btn btn-success" href="/step1" role="button">Previous</a>
-          <button type="button" class="btn btn-primary">Save</button>
+          <input type="submit" class= "btn btn-primary pull-right" value="Add"/>
           <a class="btn btn-success" href="/step3" role="button">Continue</a>
       </form></div>    
     </div>
