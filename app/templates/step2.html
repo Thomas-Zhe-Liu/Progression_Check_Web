@@ -63,20 +63,19 @@
       </div>
 
       <div class="col-lg-8">
-        <form class="bd-example">
+        <!--<form class="bd-example">-->
   <fieldset>
     <legend>1. Select your Courses</legend>
   <form method="POST" role="form"> 
-    <form class="navbar-form navbar-left" role="search">
+    <!--<form class="navbar-form navbar-left" role="search">-->
     <label for="input">Search the courses that you've completed and add them to the list below.</label>
     <div class="form-group">   
-      <input class="form-control" placeholder="Search for Courses" type="text">
+      <input class="form-control" placeholder="Search for Courses" type="text" name ='p_code'>
     </div>
     <!-- <button type="submit" class="btn btn-success">Add</button> -->
-    <input type="submit" class= "btn btn-primary pull-right" value="Add"/>
-  </form>
+    <input type="submit" class= "btn btn-primary pull-right" name="submit" value="add"/>
 
-</form method="POST" role="form">
+
   </fieldset>
   <div class="table-responsive">
 <table class="table">
@@ -152,8 +151,10 @@
 <!--           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#previousAlertModal">Previous</button> -->
           <a class="btn btn-success" href="/step1" role="button">Previous</a>
           <input type="submit" class= "btn btn-primary pull-right" value="Add"/>
-          <a class="btn btn-success" href="/step3" role="button">Continue</a>
-      </form></div>    
+          <!--<a class="btn btn-success" role="button" name = "continue" value="continue">Continue</a>-->
+          <input type="submit" class= "btn btn-success" name="submit" value="continue"/>
+</form>
+</div>    
     </div>
   </div>
 </small>

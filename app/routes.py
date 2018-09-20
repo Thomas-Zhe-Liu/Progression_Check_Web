@@ -35,18 +35,28 @@ def step1():
 	all_majors = get_majors_of_a_program(3778, 2019)
 	return render_template('step1.html', all_programs = all_programs, all_majors = all_majors)
 
-
-
+#need to justify having this 2 variable out here again later
+selected_courses_code = []
+selected_courses_code_name = []
 @app.route('/step2/<program_code>/<commence_year>/<major>', methods=["GET", "POST"])
 def step2(program_code, commence_year, major):
-	selected_courses_code = []
-	selected_courses_code_name = []
-	#if request.request.method == "POST":
-	#	return redirect(url_for("step2"))
-	#selected_courses_code_name append code and course_name
+	if request.method == "POST":
+		#this post request is for adding courses
+		if request.form["submit"] == "add":
+			#get program_code form request.form, need error handling
+			program_code = request.form["p_code"]
+			#check if the same code has been input before already
+			if program_code not in selected_courses_code:
+				selected_courses_code.append(program_code)
+		#this post request is to progress tos step 3 after all the courses have done are input
+		if request.form["submit"] == "continue":
+			return redirect(url_for("step3", program_code=program_code, commence_year=commence_year, major=major, selected_courses_code_name = selected_courses_code_name))
+	# selected_courses_code_name append code and course_name
 	for code in selected_courses_code:
 		course_name = get_course_by_course_code(code)[1]
-		selected_courses_code_name.append([code, course_name])
+		# check if the same tuple is alreday inserted, need to justify later
+		if [code, course_name] not in selected_courses_code_name:
+			selected_courses_code_name.append([code, course_name])
 		
 	
 	return render_template('step2.html', program_code = program_code, commence_year = commence_year, major = major, selected_courses_code_name = selected_courses_code_name)
@@ -54,9 +64,9 @@ def step2(program_code, commence_year, major):
 
 
 
-@app.route('/step3')
-def step3():
-	return render_template('step3.html')
+@app.route('/step3/<program_code>/<commence_year>/<major>/<selected_courses_code_name>')
+def step3(program_code, commence_year, major, selected_courses_code_name):
+	return render_template('step3.html', program_code = program_code, commence_year = commence_year, major = major, selected_courses_code_name = selected_courses_code_name)
 
 # @app.route("/step2/<program_code>/<commence_year>/<major>", methods=["GET", "POST"])
 # def step2(program_code, commence_year, major):
