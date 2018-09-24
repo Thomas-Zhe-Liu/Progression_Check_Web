@@ -26,11 +26,13 @@ def change_db(command, payload=None):
     connection.close()
 
 class Program:
-    def __init__(self, prog_code, prog_name, commence_yr, flex_uoc, majors, core_courses):
+    def __init__(self, prog_code, prog_name, commence_yr, flex_uoc, gen_uoc, free_elective_uoc, majors, core_courses):
         self.code = prog_code
         self.name = prog_name
         self.year = commence_yr
         self.flex = flex_uoc
+        self.gen_uoc = gen_uoc
+        self.free_elective_uoc = free_elective_uoc
         # list of major codes
         self.majors = majors
         # list of core codes
@@ -48,7 +50,7 @@ class Major:
         self.prog = prog_code
 
 class Course:
-    def __init__(self, course_code, course_name, t1, t2, t3, summer, prereqs, exclusions, flex):
+    def __init__(self, course_code, course_name, t1, t2, t3, summer, prereqs, exclusions, flex, gened):
         self.code = course_code
         self.name = course_name
         self.t1 = t1
@@ -58,6 +60,7 @@ class Course:
         self.prereqs = prereqs
         self.flex = flex
         self.exclusions = exclusions
+        self.gened = gened
 
 
 def get_core_links(card):
@@ -145,6 +148,14 @@ def get_majors(major_links, prog_code):
                 core_links = get_core_links(header.find_next_sibling("div"))
                 major_cores = major_cores + get_courses(core_links, False)
 
+            # elective header
+            elif re.search(r'Electives?', header.text.strip()):
+                print("elective")
+                # get number of uoc of this elective list we need to complete
+                # check if these electives are grouped e.g. lv3 comp courses
+                # the electives are grouped
+                # the electives aren't grouped - have to insert each course into the db
+
         # there are cases where courses are double listed e.g. in "CEICDH", so make major_cores unique
         Majors[major_code] = Major(major_code, major_name, 0, 0, 0, list(set(major_cores)), prog_code)
 
@@ -182,6 +193,30 @@ def get_terms(soup):
             ret_list[int(term_num.group(1))-1] = 1
 
     return ret_list
+
+def is_gened(soup):
+    if soup.find("p", text=re.compile(r'^This course is offered as General Education')):
+        return True
+    return False
+
+def get_gen_uoc(card):
+    card_info = card.find("div", class_="m-accordion-header").find("p", text=re.compile(r'\d+ UOC'))
+    if card_info is None:
+        print("Oh it's none")
+        return 0
+    else:
+        uoc = re.search(r'(\d+) UOC', card_info.text).group(1)
+        return int(uoc)
+
+# same as get_gen_uoc for now, but is a different function
+# rn coz I may need to change it
+def get_free_elective_uoc(card):
+    card_info = card.find("div", class_="m-accordion-header").find("p", text=re.compile(r'\d+ UOC'))
+    if card_info is None:
+        return 0
+    else:
+        uoc = re.search(r'(\d+) UOC', card_info.text).group(1)
+        return int(uoc)
 
 def to_braces(prerequisites):
     # check if there are commas
@@ -384,7 +419,9 @@ def get_courses(course_links, flex):
         # get terms offered
         terms = get_terms(course_soup)
         #ret_list.append(Course(course_code, course_name, terms[0], terms[1], terms[2], terms[3], prereqs, excluded, flex))
-        Courses[course_code] = Course(course_code, course_name, terms[0], terms[1], terms[2], terms[3], prereqs, excluded, flex)
+        # //TODO check if it's a gened
+        gened = is_gened(course_soup)
+        Courses[course_code] = Course(course_code, course_name, terms[0], terms[1], terms[2], terms[3], prereqs, excluded, flex, gened)
 
     return ret_list
 
@@ -431,40 +468,17 @@ for table in code_soup.find_all("table"):
         print("On handbook page for program code %s, name %s" % (prog_code, prog_name))
 
         # create new program object
-        prog = Program(prog_code, prog_name, 2019, 0, [], [])
+        prog = Program(prog_code, prog_name, 2019, 0, 0, 0, [], [])
 
         # check if there are program wide core courses
         # assume all courses found here are mandatory for the program
-        '''
-        core_links = get_core_links(prog_soup)
-        prog.cores = get_courses(core_links, False)
-        for core in prog.cores:
-            print("Program core code: %s" % core)
-            #print("Course prerequisites: %s" % ','.join(map(str, core.prereqs)))
-        
-        # check if there are flex courses e.g. commerce
-        flex_links = get_flex_links(prog)
-        flex = get_courses(flex_links, True)
-        if flex:
-            prog.cores = prog.cores + flex
-            for f in flex:
-                print("Flex code: %s" % f)
-
-        # go to program majors to find program specific cores
-        major_links = get_major_links(prog_soup)
-        prog.majors = get_majors(major_links, prog_code)
-
-        # queue this program to be inserted into db
-        Programs[prog_code] = prog
-        '''
-
         headers = prog_soup.find_all("div", {"class" : "m-accordion-group-header"})
         for header in headers:
+            '''
             # flex core header
             if re.search(r'Flex', header.text.strip()):
                 # pass program in so it can update the program 
                 flex_links = get_flex_links(header.find_next_sibling("div"), prog)
-                print(flex_links)
                 prog.cores = prog.cores + get_courses(flex_links, True)
 
             # core course header
@@ -476,11 +490,26 @@ for table in code_soup.find_all("table"):
             elif re.search(r'Majors', header.text.strip()):
                 major_links = get_major_links(header.find_next_sibling("div"))
                 prog.majors = prog.majors + get_majors(major_links, prog_code)
+            '''
+
+            # gened header
+            if re.search(r'General Education\s*$', header.text.strip()):
+                print("gened!")
+                prog.gen_uoc = get_gen_uoc(header.find_next_sibling("div"))
+
+            # free elective header
+            elif re.search(r'Free Elective', header.text.strip()):
+                print("free!")
+                prog.free_elective_uoc = get_free_elective_uoc(header.find_next_sibling("div"))
+
 
         # queue this program to be inserted into db
         Programs[prog_code] = prog
 
-'''
+        # debugging print's 
+        print("program geneds uoc: %d" % prog.gen_uoc)
+        print("program free electives uoc: %d" % prog.free_elective_uoc)
+        '''
         for major in prog.majors:
             # get major object
             major_obj = Majors[major]
@@ -513,9 +542,12 @@ for table in code_soup.find_all("table"):
                 if course_obj.summer:
                     print("summer ", end='')
                 print()
-'''
+                if course_obj.gened:
+                    print("It is a gened!!!")
 
+'''
 # insert into db
+'''
 for key in Programs:
     curr_prog = Programs[key]
     # insert program
@@ -559,3 +591,4 @@ for key in Courses:
             payload = (curr_course.code, 0, '2019', prereq, i)
             change_db(command, payload)
         i = i + 1
+'''
