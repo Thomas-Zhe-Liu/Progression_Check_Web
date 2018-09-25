@@ -3,12 +3,16 @@ from bs4 import BeautifulSoup
 import re
 import sqlite3
 
-# get all UNSW program codes from this UNSW website
+# global url info I'll use
 hb_base = "https://www.handbook.unsw.edu.au"
 hb_program_base = hb_base + "/undergraduate/programs/2019/"
 hb_code_base = hb_base + "undergraduate/courses/2019/"
 program_codes = requests.get("http://www.gettingstarted.unsw.edu.au/uac-codes-and-corresponding-unsw-undergraduate-program-codes");
 code_soup = BeautifulSoup(program_codes.content, 'html.parser')
+
+# regex patterns I use frequenetly
+coderx = r'[A-Z]{4}\d{4}'
+coderx_g = r'([A-Z]{4}\d{4})'
 
 # list of programs to insert into db
 Programs = {}
@@ -16,6 +20,7 @@ Programs = {}
 Majors = {} 
 # list of courses to insert into db
 Courses = {}
+
 
 def change_db(command, payload=None):
     """Execute command (with given payload, if any) in given database."""
@@ -62,7 +67,6 @@ class Course:
         self.exclusions = exclusions
         self.gened = gened
 
-
 def get_core_links(card):
     ret_list = []
 
@@ -85,7 +89,6 @@ def get_core_links(card):
 
     return ret_list
 
-
 def get_major_links(card):
     ret_list = []
     # some programs don't list any content - e.g. heading 'Double major' in Commerce
@@ -104,7 +107,6 @@ def get_major_links(card):
 
     return ret_list
 
-
 def get_flex_links(card, program):
     ret_list = []
     # get number of courses that must be taken in the list
@@ -119,7 +121,6 @@ def get_flex_links(card, program):
         ret_list.append(hb_base + course.find("a")['href'].strip())
 
     return ret_list
-
 
 def get_majors(major_links, prog_code):
     '''
@@ -171,7 +172,7 @@ def get_excluded(soup):
         if course_list is None:
             return ret_list
         for course in course_list:
-            course_code = course.find("span", text=re.compile(r'([A-Z]{4}\d{4})'))
+            course_code = course.find("span", text=re.compile(coderx))
             if course_code is not None:
                 ret_list.append(course_code.text)
 
@@ -202,7 +203,6 @@ def is_gened(soup):
 def get_gen_uoc(card):
     card_info = card.find("div", class_="m-accordion-header").find("p", text=re.compile(r'\d+ UOC'))
     if card_info is None:
-        print("Oh it's none")
         return 0
     else:
         uoc = re.search(r'(\d+) UOC', card_info.text).group(1)
@@ -226,7 +226,7 @@ def to_braces(prerequisites):
     groups = prerequisites.split(',')
     # add starting brace
     for i in range(len(groups)):
-        groups[i] = re.sub(r'([A-Z]{4}\d{4})', r'(\1', groups[i], 1)
+        groups[i] = re.sub(coderx_g, r'(\1', groups[i], 1)
         if i == len(groups)-1:
             groups[i] = groups[i] + ')'
     # join on ending brace
@@ -315,7 +315,7 @@ def parse_prereqs(prerequisites):
 
     if (len(groups) == 1):
         # no groups - just list like a and b and c
-        codes = re.findall(r'[A-Z]{4}\d{4}', prerequisites)
+        codes = re.findall(coderx, prerequisites)
         if (re.search(r'or', prerequisites)):
             # or list
             for code in codes:
@@ -350,7 +350,7 @@ def parse_prereqs(prerequisites):
             # parenthesize properly for the merge
             for i in range(len(groups)):
                 groups[i] = groups[i].replace("(", "")
-                groups[i] = re.sub(r'([A-Z]{4}\d{4})', r'(\1)', groups[i])
+                groups[i] = re.sub(coderx_g, r'(\1)', groups[i])
 
             # merge 
             for i in range(len(groups)-1):
@@ -366,7 +366,7 @@ def parse_prereqs(prerequisites):
         # using and groups - easy, can put straight into prereqs
         for group in groups:
             and_group = []
-            for code in re.findall(r'[A-Z]{4}\d{4}', group):
+            for code in re.findall(coderx, group):
                 and_group.append(code)
             prereqs.append(and_group)
 
@@ -383,7 +383,7 @@ def get_courses(course_links, flex):
     ret_list = []
     for course_link in course_links:
         # check if this course is already in the courses dictionary
-        course_code = re.search(r'([A-Z]{4}\d{4})', course_link).group(1)
+        course_code = re.search(coderx_g, course_link).group(1)
         ret_list.append(course_code)
         if course_code in Courses:
             # already have this course object in the dict
@@ -408,7 +408,7 @@ def get_courses(course_links, flex):
                     prerequisites = re.sub(r'Excluded:.*$','', prerequisites)
                     exclusion = exclusion_match.group(1)
                     # assume excluded courses are simple csv
-                    excluded = re.findall(r'[A-Z]{4}\d{4}', exclusion)
+                    excluded = re.findall(coderx, exclusion)
 
                 prereqs = parse_prereqs(prerequisites)
 
@@ -418,14 +418,12 @@ def get_courses(course_links, flex):
 
         # get terms offered
         terms = get_terms(course_soup)
-        #ret_list.append(Course(course_code, course_name, terms[0], terms[1], terms[2], terms[3], prereqs, excluded, flex))
-        # //TODO check if it's a gened
         gened = is_gened(course_soup)
         Courses[course_code] = Course(course_code, course_name, terms[0], terms[1], terms[2], terms[3], prereqs, excluded, flex, gened)
 
     return ret_list
 
-testing = ['3778', '3707']
+testing = ['3778', '3707', '3502']
 for table in code_soup.find_all("table"):
 
     # check the table's first column is "UAC Code"
@@ -474,7 +472,6 @@ for table in code_soup.find_all("table"):
         # assume all courses found here are mandatory for the program
         headers = prog_soup.find_all("div", {"class" : "m-accordion-group-header"})
         for header in headers:
-            '''
             # flex core header
             if re.search(r'Flex', header.text.strip()):
                 # pass program in so it can update the program 
@@ -490,16 +487,14 @@ for table in code_soup.find_all("table"):
             elif re.search(r'Majors', header.text.strip()):
                 major_links = get_major_links(header.find_next_sibling("div"))
                 prog.majors = prog.majors + get_majors(major_links, prog_code)
-            '''
 
             # gened header
-            if re.search(r'General Education\s*$', header.text.strip()):
-                print("gened!")
+            # use \s* coz header "General Education Maturity Req"
+            elif re.search(r'General Education\s*$', header.text.strip()):
                 prog.gen_uoc = get_gen_uoc(header.find_next_sibling("div"))
 
             # free elective header
             elif re.search(r'Free Elective', header.text.strip()):
-                print("free!")
                 prog.free_elective_uoc = get_free_elective_uoc(header.find_next_sibling("div"))
 
 
@@ -509,7 +504,7 @@ for table in code_soup.find_all("table"):
         # debugging print's 
         print("program geneds uoc: %d" % prog.gen_uoc)
         print("program free electives uoc: %d" % prog.free_elective_uoc)
-        '''
+        
         for major in prog.majors:
             # get major object
             major_obj = Majors[major]
@@ -545,26 +540,26 @@ for table in code_soup.find_all("table"):
                 if course_obj.gened:
                     print("It is a gened!!!")
 
-'''
+
 # insert into db
 '''
 for key in Programs:
     curr_prog = Programs[key]
     # insert program
-    command = "INSERT INTO PROGRAM (program_code, commence_year, program_name, flexi_core_course) VALUES (?,?,?,?)"
-    payload = (curr_prog.code, curr_prog.year, curr_prog.name, curr_prog.flex)
+    command = "INSERT INTO PROGRAM (program_code, commence_year, program_name, general_course, free_elective, flexi_core_course) VALUES (?,?,?,?)"
+    payload = (int(curr_prog.code), curr_prog.year, curr_prog.name, curr_prog.gen_uoc, curr_prog.free_elective_uoc, curr_prog.flex)
     change_db(command, payload)
     # insert bridge to core courses
     #//TODO flex
     for core in curr_prog.cores:
         command = "INSERT INTO CORE_COURSE (course_code, program_code, commence_year, is_flexi) VALUES(?,?,?,?)"
-        payload = (core, curr_prog.code, curr_prog.year, 0)
+        payload = (core, int(curr_prog.code), curr_prog.year, 0)
         change_db(command, payload)
 
 for key in Majors:
     curr_major = Majors[key]
     command = "INSERT INTO MAJOR (major_code, major_name, lv1elective, lv2elective, lv3elective, program_code, commence_year) VALUES(?,?,?,?,?,?,?)"
-    payload = (curr_major.code, curr_major.name, curr_major.lv1, curr_major.lv2, curr_major.lv3, curr_major.prog, '2019')
+    payload = (curr_major.code, curr_major.name, curr_major.lv1, curr_major.lv2, curr_major.lv3, int(curr_major.prog), '2019')
     change_db(command, payload)
     for core in curr_major.cores:
         command = "INSERT INTO MAJOR_REQUIRED_COURSE(major_code, course_code) VALUES (?,?)" 
@@ -573,8 +568,8 @@ for key in Majors:
 
 for key in Courses:
     curr_course = Courses[key]
-    command = "INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer) VALUES(?,?,?,?,?,?)"
-    payload = (curr_course.code, curr_course.name, curr_course.t1, curr_course.t2, curr_course.t3, curr_course.summer)
+    command = "INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer, is_gen) VALUES(?,?,?,?,?,?)"
+    payload = (curr_course.code, curr_course.name, curr_course.t1, curr_course.t2, curr_course.t3, curr_course.summer, curr_course.gened)
     change_db(command, payload)
     for excluded in curr_course.exclusions:
         command = "INSERT INTO EXCLUDE (course_code, program_code, commence_year, replaced_course, group_id) VALUES(?,?,?,?,?)"
