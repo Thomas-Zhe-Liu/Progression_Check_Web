@@ -55,6 +55,7 @@ def merge(str1, str2):
     # SPLIT ON OR LINK!!!!
     groups1 = list(filter(None, mark_outside_or(str1).split('!')))
     groups2 = list(filter(None, mark_outside_or(str2).split('!')))
+    
     '''
     print("groups1: ")
     print(groups1)
