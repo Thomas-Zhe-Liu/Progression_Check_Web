@@ -87,15 +87,21 @@ def step3(program_code, commence_year, major):
 
 		#iterate through each course_code in selected_course_code and determine whether this course is core, elective, general education or free elective
 		for course_code in selected_courses_code:
-			if(is_core(program_code, commence_year, major_code, course_code)):
+			print(course_code)
+			if(is_core(program_code, commence_year, major, course_code)):
+				print("core")
 				continue 
-			elif(is_elective(program_code, commence_year, major_code, course_code) and elective_uoc - 6 >= 0):
+			elif(is_elective(program_code, commence_year, major, course_code) and elective_uoc - 6 >= 0):
 				elective_uoc -= 6
+				print("elective")
 				continue
-			elif(is_gene(program_code, commence_year, major_code, course_code) and elective_uoc - 6 >= 0):
-				elective_uoc -= 6
+			elif(is_gene(commence_year, course_code) and gene_uoc - 6 >= 0):
+				print(course_code)
+				print("gene")
+				gene_uoc -= 6
 				continue
 			elif(free_uoc - 6 >= 0):
+				print("free")
 				free_uoc -= 6
 
 		#get all the remainning core course
