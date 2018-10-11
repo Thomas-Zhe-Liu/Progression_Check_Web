@@ -149,3 +149,19 @@ CREATE TABLE PREREQUISITE
 );
 
 --INSERT INTO PREREQUISITE (course_code, program_code, commence_year, prerequisite_course, group_id) VALUES ('MATH1131', 'COMP3978',2016, 'MATH1231',1);
+
+-- Below is manually entered data for COMPA1 electives, just for demonstration purposes. Programatic way of getting these in is pending with James :)
+INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer, is_gen) VALUES ('COMP3131', 'Programming Languages and Compilers', 1, 0, 0, 0, 0);
+INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer, is_gen) VALUES ('COMP3141', 'Software System Design and Implementation', 0, 1, 0, 0, 0);
+INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer, is_gen) VALUES ('COMP3151', 'Foundations of Concurrency', 0, 1, 0, 0, 0);
+INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer, is_gen) VALUES ('COMP3153', 'Algorithmic Verification', 1, 0, 0, 0, 0);
+INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer, is_gen) VALUES ('COMP3211', 'Computer Architecture', 1, 0, 0, 0, 0);
+INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer, is_gen) VALUES ('COMP3231', 'Operating Systems', 1, 0, 0, 0, 0);
+INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer, is_gen) VALUES ('COMP3421', 'Computer Graphics', 0, 1, 0, 0, 0);
+INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer, is_gen) VALUES ('COMP3431', 'Robotic Software Architecture', 0, 0, 1, 0, 0);
+INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer, is_gen) VALUES ('COMP3511', 'Human Computer Interaction', 0, 0, 1, 1, 0);
+INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer, is_gen) VALUES ('COMP3601', 'Design Project A', 0, 0, 1, 0, 0);
+INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer, is_gen) VALUES ('COMP3821', 'Extended Algorithms and Programming Techniques', 0, 1, 0, 0, 0);
+INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer, is_gen) VALUES ('COMP3891', 'Extended Operating Systems', 1, 0, 0, 0, 0);
+INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer, is_gen) VALUES ('COMP3901', 'Special Project A', 1, 1, 1, 1, 0);
+INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer, is_gen) VALUES ('COMP3902', 'Special Project B', 1, 1, 1, 0, 0);
