@@ -14,3 +14,13 @@ def get_course_by_course_code(course_code):
 for r in results:
 	print(r)
 '''
+
+
+
+#check if it is core, return true if the course is elective, false otherwise
+def is_elective(program_code, commence_year, major_code, course_code):
+
+
+#check if it is general eudcation, return true if the course is a general eductaion, false otherwise
+def is_gene(program_code, commence_year, major_code, course_code):
+

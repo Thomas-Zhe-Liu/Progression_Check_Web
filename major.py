@@ -30,3 +30,14 @@ results = get_majors_of_a_program(3778, 2019)
 for r in results:
 	print(r)
 '''
+
+
+#get the UOC of Major_Required_ELECTIVEs without consideration of what courses have been done, return e.g 36 for(6 courses)
+def get_elective_uoc(program_code, commence_year, major_code):
+
+#get the UOC of general education course without consideration of what courses have been done, return e.g 36 for(6 courses)
+def get_gene_uoc(program_code, commence_year, major_code):
+
+#get the UOC of free_elective without consideration of what courses have been done, return e.g 36 for(6 courses)
+def get_free_uoc(program_code, commence_year, major_code):
+

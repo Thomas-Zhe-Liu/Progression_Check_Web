@@ -26,7 +26,7 @@ for r in results:
 #pass, program_code, commence_year and courses_have_done(course_code) to return a list of core_courses that should be dont later
 def cse_get_remaining_cores(program_code, commence_year, major_code, courses_have_done):
 	all_courses = cse_get_core_courses(major_code, commence_year)
-	#make a copy of the list and delete teh ones that have be done
+	#make a copy of the list and delete the ones that have be done
 	#what if I input a random course, error handling
 	remaining_courses = list(all_courses)
 	for course in all_courses:

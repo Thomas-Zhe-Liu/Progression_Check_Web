@@ -38,7 +38,9 @@ def step1():
 
 
 #need to justify having this 2 variable out here again later
+#this list will be used throughout the process
 selected_courses_code = []
+#this list is for step 2 to display the slected course only
 selected_courses_code_name = []
 @app.route('/step2/<program_code>/<commence_year>/<major>', methods=["GET", "POST"])
 def step2(program_code, commence_year, major):
@@ -69,7 +71,7 @@ def step2(program_code, commence_year, major):
 
 
 
-
+#the system filter out from selected_courses_code, get lists: remaining_core_all_info , finished_electives, finished_genes, finished_free_electives
 @app.route('/step3/<program_code>/<commence_year>/<major>', methods=["GET", "POST"])
 def step3(program_code, commence_year, major):
 	
@@ -84,6 +86,11 @@ def step3(program_code, commence_year, major):
 		for course_code in remaining_required_courses:
 			c = get_course_by_course_code(course_code)
 			remaining_core_all_info.append(c)
+
+	#get how many electives are left(elective_uoc) and filter a list of all the electives have done 
+	finished_electives = []
+	elective_uoc = get_elective_uoc(program_code,commence_year,major);
+	
 	#################################################################################################################
 		
 				
