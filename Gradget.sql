@@ -82,16 +82,17 @@ CREATE TABLE MAJOR_REQUIRED_COURSE
 CREATE TABLE MAJOR_REQUIRED_ELECTIVE
 (
 	major_code TEXT,
+	course_prefix TEXT, --what kind of the course is
 	course_level INTEGER, --what level the course has to be at
 	course_amount INTEGER, --how many this lvl courses needs to be taken, if exists interchangeable courses, the course_aount in each relevant tuple will be the same
 	group_id INTEGER, --interchangable courses will have the same group id
 	PRIMARY KEY(major_code, course_level, group_id),
 	FOREIGN KEY(major_code) REFERENCES MAJOR(major_code)
 );
---INSERT INTO MAJOR_REQUIRED_ELECTIVE(major_code, course_level, course_amount, group_id) VALUES ('COMPA1', 3, 5, 0);
---INSERT INTO MAJOR_REQUIRED_ELECTIVE(major_code, course_level, course_amount, group_id) VALUES ('COMPA1', 4, 5, 0);
---INSERT INTO MAJOR_REQUIRED_ELECTIVE(major_code, course_level, course_amount, group_id) VALUES ('COMPA1', 6, 5, 0);
---INSERT INTO MAJOR_REQUIRED_ELECTIVE(major_code, course_level, course_amount, group_id) VALUES ('COMPA1', 9, 5, 0);
+--INSERT INTO MAJOR_REQUIRED_ELECTIVE(major_code, course_prefix, course_level, course_amount, group_id) VALUES ('COMPA1','COMP', 3, 5, 0);
+--INSERT INTO MAJOR_REQUIRED_ELECTIVE(major_code, course_prefix, course_level, course_amount, group_id) VALUES ('COMPA1','COMP', 4, 5, 0);
+--INSERT INTO MAJOR_REQUIRED_ELECTIVE(major_code, course_prefix, course_level, course_amount, group_id) VALUES ('COMPA1','COMP', 6, 5, 0);
+--INSERT INTO MAJOR_REQUIRED_ELECTIVE(major_code, course_prefix, course_level, course_amount, group_id) VALUES ('COMPA1','COMP', 9, 5, 0);
 
 --this table address the scenario where the user has to completed part of a group of specified course. E.G: in COMPA1 students have to complete 3 out of 4 given electives
 CREATE TABLE MAJOR_REQUIRED_ELECTIVE_SPECIFIC
