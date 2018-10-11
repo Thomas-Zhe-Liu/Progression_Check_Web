@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gradget</title>
+  <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">Home</a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#">About</a></li>
+          <li><a href="/step1">Check Progression</a></li>
+          <li><a href="#">Help</a></li>
+          <li><a href="#">Login</a></li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+</head>
+<body>
+  <h1 class="text-center"> <small clss="text-muted">Progression Check</h1>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="list-group">
+          <button type="button" class="list-group-item list-group-item-action active">Step 1: Select your program</button>
+          <button type="button" class="list-group-item list-group-item-action">Step 2: Select your courses</button>
+          <button type="button" class="list-group-item list-group-item-action">Step 3: View your progression report</button>
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+      <form method="POST" role="form">
+          <h4>1. Select your Program/Degree</h4>
+          <div class="form-group">
+            <label for="exampleFormControlSelect1">Find and select your current program or degree by using the dropdown below.</label>
+            <select class="form-control" id="exampleFormControlSelect1" name="program">
+              {% for program in all_programs %}
+              <option>{{program[0]}} {{program[1]}}</option>
+              {% endfor %}         
+            </select>
+          </div>
+
+          <h4>2. Select the year you started your Program.</h4>
+          <div class="form-group">
+            <select class="form-control" id="exampleFormControlSelect1" name="c_year">
+              <option>2015</option>
+              <option>2016</option>
+              <option>2017</option>
+              <option>2018</option>
+              <option>2019</option>
+            </select>
+          </div>
+
+          <h4>3. Select your Major.</h4>
+          <div class="form-group">
+            <select class="form-control" id="exampleFormControlSelect1" name="major">
+              {% for major in all_majors %}
+              <option>{{major[0]}} {{major[1]}}</option>
+              {% endfor %}      
+            </select>
+          </div>
+          <input type="submit" class= "btn btn-primary pull-right" value="Submit"/>
+        </form>
+      </div>    
+    </div>
+  </div>
+</body>
+</html>

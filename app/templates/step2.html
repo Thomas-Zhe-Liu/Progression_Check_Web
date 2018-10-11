@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gradget</title>
+  <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">Home</a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#">About</a></li>
+          <li><a href="/step1">Check Progression</a></li>
+          <li><a href="#">Help</a></li>
+          <li><a href="#">Login</a></li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+</head>
+<body>
+
+<!-- Modal for Previous Alert 
+<div class="modal fade" id="previousAlertModal" tabindex="-1" role="dialog" aria-labelledby="previousAlertModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="previousAlertModalLabel"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to go back? All unsave changes will be lost. Click Save then Continue.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+  <h1 class="text-center"> <small clss="text-muted">Progression Check</small></h1><small clss="text-muted">
+  <h2 class="text-center"> <small clss="text-muted">{{ program_code }} {{ commence_year }} {{ major }} </small></h2><small clss="text-muted">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="list-group">
+          <button type="button" class="list-group-item list-group-item-action">Step 1: Select your program</button>
+          <button type="button" class="list-group-item list-group-item-action active">Step 2: Select your courses</button>
+          <button type="button" class="list-group-item list-group-item-action">Step 3: View your progression report</button>
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+        <!--<form class="bd-example">-->
+  <fieldset>
+    <legend>1. Select your Courses</legend>
+  <form method="POST" role="form"> 
+    <!--<form class="navbar-form navbar-left" role="search">-->
+    <label for="input">Search the courses that you've completed and add them to the list below.</label>
+    <div class="form-group">   
+      <input class="form-control" placeholder="Search for Courses" type="text" name ='p_code'>
+    </div>
+    <!-- <button type="submit" class="btn btn-success">Add</button> -->
+    <input type="submit" class= "btn btn-primary pull-right" name="submit" value="add"/>
+
+
+  </fieldset>
+  <div class="table-responsive">
+<table class="table">
+    <caption>List of Completed Courses</caption>
+  <thead>
+    <tr>
+      <th scope="col">UOC</th>
+      <th scope="col">Course Code</th>
+      <th scope="col">Name</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for course in selected_courses_code_name %}
+    <tr>
+      <th scope="row">6</th>
+      <td>{{course[0]}}</td>
+      <td>{{course[1]}}</td>
+      <td><button type="button" class="btn btn-outline-danger">Remove</button></td>
+    </tr>
+    {% endfor %}  
+    <!--<tr>
+      <th scope="row">6</th>
+      <td>COMP1511</td>
+      <td>Introduction to Programming</td>
+      <td><button type="button" class="btn btn-outline-danger">Remove</button></td>
+    </tr>
+    <tr>
+      <th scope="row">6</th>
+      <td>COMP2521</td>
+      <td>Data Structures and Algorithms</td>
+      <td><button type="button" class="btn btn-outline-danger">Remove</button></td>
+    </tr>
+    <tr>
+      <th scope="row">6</th>
+      <td>MATH1081</td>
+      <td>Data Structures and Algorithms</td>
+      <td><button type="button" class="btn btn-outline-danger">Remove</button></td>
+    </tr>
+    <tr>
+      <th scope="row">6</th>
+      <td>MATH1131</td>
+      <td>Mathematics 1A</td>
+      <td><button type="button" class="btn btn-outline-danger">Remove</button></td>
+    </tr>
+  <tr>
+      <th scope="row">6</th>
+      <td>MATH1231</td>
+      <td>MATH1231 Mathematics 1B</td>
+      <td><button type="button" class="btn btn-outline-danger">Remove</button></td>
+    </tr>
+    <tr>
+      <th scope="row">6</th>
+      <td>COMP2521</td>
+      <td>Data Structures and Algorithms</td>
+      <td><button type="button" class="btn btn-outline-danger">Remove</button></td>
+    </tr>
+    <tr>
+      <th scope="row">6</th>
+      <td>COMP2041</td>
+      <td>Software Construction</td>
+      <td><button type="button" class="btn btn-outline-danger">Remove</button></td>
+    </tr>
+    <tr>
+      <th scope="row">6</th>
+      <td>COMP2911</td>
+      <td>Eng. Design in Computing</td>
+      <td><button type="button" class="btn btn-outline-danger">Remove</button></td>
+    </tr> -->
+  </tbody>
+  </table>
+</div>
+<!--           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#previousAlertModal">Previous</button> -->
+          <a class="btn btn-success" href="/step1" role="button">Previous</a>
+          <!-- <input type="submit" class= "btn btn-primary pull-right" value="Add"/> -->
+          <!--<a class="btn btn-success" role="button" name = "continue" value="continue">Continue</a>-->
+          <input type="submit" class= "btn btn-success" name="submit" value="continue"/>
+</form>
+</div>    
+    </div>
+  </div>
+</small>
+
+<div class="container-fluid" style="height: 200px">
+<!-- Add Padding for the footer -->
+</div>
+</body></html>

@@ -21,6 +21,7 @@ CREATE TABLE COURSE
 	summer INTEGER NOT NULL,  --1 for offered, 0 for not
 	is_gen INTEGER NOT NULL  --1 for this course is  a general education course, 0 is not
 );
+
 --INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer, is_gen) VALUES ('COMP1917', 'Best Course', 1, 0, 0, 1, 1);
 --INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer, is_gen) VALUES ('MATH1141', 'Best Course', 1, 0, 0, 0, 0);
 --INSERT INTO COURSE (course_code, course_name, t1, t2, t3, summer, is_gen) VALUES ('MATH1131', 'Best Course', 1, 0, 0, 1, 1);
@@ -36,6 +37,7 @@ CREATE TABLE PROGRAM
 	flexi_core_course INTEGER, --how many core courses are flexible(exchangeable) course in this progra,
 	PRIMARY KEY(program_code, commence_year)  --Program 3978 commenced in 2017 has difference course requirements with 3978 in 2016
 );
+
 --INSERT INTO PROGRAM (program_code, commence_year, program_name, general_course, free_elective, flexi_core_course) VALUES ('COMP3978',2016, 'Computer Science', 5, 5, 1);
 
 CREATE TABLE CORE_COURSE
@@ -48,6 +50,7 @@ CREATE TABLE CORE_COURSE
 	FOREIGN KEY(program_code, commence_year) REFERENCES PROGRAM(program_code, commence_year),
 	FOREIGN KEY(course_code) REFERENCES COURSE(course_code)
 );
+
 --INSERT INTO CORE_COURSE (course_code, program_code, commence_year, is_flexi) VALUES ('COMP1917', 'COMP3978',2016, 0);
 --INSERT INTO CORE_COURSE (course_code, program_code, commence_year, is_flexi) VALUES ('MATH1131', 'COMP3978',2016, 1);
 --INSERT INTO CORE_COURSE (course_code, program_code, commence_year, is_flexi) VALUES ('MATH1231', 'COMP3978',2016, 1);
@@ -66,6 +69,7 @@ CREATE TABLE MAJOR
 	commence_year INTEGER,
 	FOREIGN KEY(program_code, commence_year) REFERENCES PROGRAM(program_code, commence_year)
 );
+
 --INSERT INTO MAJOR (major_code, major_name, lv1elective, lv2elective, lv3elective, program_code, commence_year) VALUES('COMPA1', 'COMP SCIENCE', 0, 2, 5, 'COMP3978', 2016);
 
 CREATE TABLE MAJOR_REQUIRED_COURSE
@@ -76,6 +80,7 @@ CREATE TABLE MAJOR_REQUIRED_COURSE
 	FOREIGN KEY(major_code) REFERENCES MAJOR(major_code),
 	FOREIGN KEY(course_code) REFERENCES COURSE(course_code)
 );
+
 --INSERT INTO MAJOR_REQUIRED_COURSE(major_code, course_code) VALUES ('COMPA1', 'COMP1917');
 
 --this table address the amount of each lv electives one major needs to take
@@ -89,6 +94,7 @@ CREATE TABLE MAJOR_REQUIRED_ELECTIVE
 	PRIMARY KEY(major_code, course_level, group_id),
 	FOREIGN KEY(major_code) REFERENCES MAJOR(major_code)
 );
+
 --INSERT INTO MAJOR_REQUIRED_ELECTIVE(major_code, course_prefix, course_level, course_amount, group_id) VALUES ('COMPA1','COMP', 3, 5, 0);
 --INSERT INTO MAJOR_REQUIRED_ELECTIVE(major_code, course_prefix, course_level, course_amount, group_id) VALUES ('COMPA1','COMP', 4, 5, 0);
 --INSERT INTO MAJOR_REQUIRED_ELECTIVE(major_code, course_prefix, course_level, course_amount, group_id) VALUES ('COMPA1','COMP', 6, 5, 0);
@@ -104,8 +110,8 @@ CREATE TABLE MAJOR_REQUIRED_ELECTIVE_SPECIFIC
 	PRIMARY KEY(major_code, course_code, group_id),
 	FOREIGN KEY(major_code) REFERENCES MAJOR(major_code)
 );
---INSERT INTO MAJOR_REQUIRED_ELECTIVE_SPECIFIC(major_code, course_code, course_amount, group_id) VALUES ('COMPA1', 'MATH1131', 3, 0);
 
+--INSERT INTO MAJOR_REQUIRED_ELECTIVE_SPECIFIC(major_code, course_code, course_amount, group_id) VALUES ('COMPA1', 'MATH1131', 3, 0);
 
 --table "EXCLUDE" reflects scenario like MATH1131 + MATH1231 can replace MATH1141 + MATH1241
 --"replaced_course" is the course being replaced, if MATH1131 can replace MATH1141, then course_code is MATH1131 and replaced_course is MATH1141
@@ -123,6 +129,7 @@ CREATE TABLE EXCLUDE
 	FOREIGN KEY(course_code) REFERENCES COURSE(course_code),
 	FOREIGN KEY(replaced_course) REFERENCES COURSE(course_code)
 );
+
 --INSERT INTO EXCLUDE (course_code, program_code, commence_year, replaced_course, group_id) VALUES ('MATH1131', 'COMP3978',2016, 'MATH1141', 1);
 
 --table "PREREQUISITE" reflects scenario like MATH1131 is prerequisite for 
@@ -140,4 +147,5 @@ CREATE TABLE PREREQUISITE
 	FOREIGN KEY(course_code) REFERENCES COURSE(course_code),
 	FOREIGN KEY(prerequisite_course) REFERENCES COURSE(course_code)
 );
+
 --INSERT INTO PREREQUISITE (course_code, program_code, commence_year, prerequisite_course, group_id) VALUES ('MATH1131', 'COMP3978',2016, 'MATH1231',1);
