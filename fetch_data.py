@@ -563,7 +563,6 @@ for table in code_soup.find_all("table"):
                     print("It is a gened!!!")
 
 # insert into db
-
 for key in Programs:
     curr_prog = Programs[key]
     # insert program
@@ -589,12 +588,12 @@ for key in Majors:
     for elective in curr_major.level_electives:
         command = "INSERT INTO MAJOR_REQUIRED_ELECTIVE(major_code, course_level, course_amount, group_id) VALUES (?,?,?,?)"
         payload = (curr_major.code, elective[0], elective[1], elective[2])
-        print("command: %s, code: %s, level: %s, amount: %s, id: %s\n" % (command, curr_major.code, elective[0], elective[1], elective[2]))
+        #print("command: %s, code: %s, level: %s, amount: %s, id: %s\n" % (command, curr_major.code, elective[0], elective[1], elective[2]))
         change_db(command, payload)
     for elective in curr_major.specific_electives:
         command = "INSERT INTO MAJOR_REQUIRED_ELECTIVE_SPECIFIC(major_code, course_code, course_amount, group_id) VALUES (?,?,?,?)"
         payload = (curr_major.code, elective[0], elective[1], elective[2])
-        print("command: %s, major code: %s, course code: %s, amount: %s, id: %s\n" % (command, curr_major.code, elective[0], elective[1], elective[2]))
+        #print("command: %s, major code: %s, course code: %s, amount: %s, id: %s\n" % (command, curr_major.code, elective[0], elective[1], elective[2]))
         change_db(command, payload)
 
 for key in Courses:
