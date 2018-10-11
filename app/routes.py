@@ -76,10 +76,30 @@ def step2(program_code, commence_year, major):
 def step3(program_code, commence_year, major):
 	
 	#####################################CSE only###################################################################
-	#get all the remainning core course
 	#cse is a bit special in terms of prgram structure, need to address this later
-	remaining_core_all_info = []
 	if program_code == "3778":
+		#get all the uoc requirement of major_requried_electives, general education and free_electives: e.g. elective_uoc = 36
+		elective_uoc = get_elective_uoc(commence_year,major);
+		gene_uoc = get_gene_uoc(program_code, commence_year);
+		free_uoc = get_free_uoc(program_code, commence_year);
+
+		#initilize 3 lists in accordance to let the courses being filtered be appended into this list
+
+		#iterate through each course_code in selected_course_code and determine whether this course is core, elective, general education or free elective
+		for course_code in selected_courses_code:
+			if(is_core(program_code, commence_year, major_code, course_code)):
+				continue 
+			elif(is_elective(program_code, commence_year, major_code, course_code) and elective_uoc - 6 >= 0):
+				elective_uoc -= 6
+				continue
+			elif(is_gene(program_code, commence_year, major_code, course_code) and elective_uoc - 6 >= 0):
+				elective_uoc -= 6
+				continue
+			elif(free_uoc - 6 >= 0):
+				free_uoc -= 6
+
+		#get all the remainning core course
+		remaining_core_all_info = []
 		#get all the remaining course code
 		remaining_required_courses = cse_get_remaining_cores(program_code, commence_year, major, selected_courses_code)
 		#get all the remaining course code
@@ -87,14 +107,10 @@ def step3(program_code, commence_year, major):
 			c = get_course_by_course_code(course_code)
 			remaining_core_all_info.append(c)
 
-	#get how many electives are left(elective_uoc) and filter a list of all the electives have done 
-	finished_electives = []
-	elective_uoc = get_elective_uoc(program_code,commence_year,major);
-	
 	#################################################################################################################
 		
 				
-	return render_template('step3.html', program_code = program_code, commence_year = commence_year, major = major, remaining_core_all_info = remaining_core_all_info, elective_uoc = 1, free_uoc = 2, gene_uoc = 3)
+	return render_template('step3.html', program_code = program_code, commence_year = commence_year, major = major, remaining_core_all_info = remaining_core_all_info, elective_uoc = elective_uoc, free_uoc = free_uoc, gene_uoc = gene_uoc)
 
 # @app.route("/step2/<program_code>/<commence_year>/<major>", methods=["GET", "POST"])
 # def step2(program_code, commence_year, major):

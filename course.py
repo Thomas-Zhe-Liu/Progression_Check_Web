@@ -68,7 +68,6 @@ def is_gene(commence_year, course_code):
 	# no loop needed as only one entry per course
 	if results[0][-1] == 1:
 		return True
-
 	return False
 
 # Test is_core
