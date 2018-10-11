@@ -71,6 +71,27 @@
     <legend>Progression Check Report</legend>
   </fieldset></form>
   <div class="table-responsive">
+  <!------------------------------------------------>
+  <table class="table">
+    <caption></caption>
+  <thead>
+    <tr>
+      <th scope="col">Computing Electives to be completed:</th>
+      <th scope="col"></th>
+      <th scope="col"></th>    
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Total units:</th>
+      <td>{{elective_uoc}}</td>
+      
+      <td><button type="button" class="btn btn-outline-danger">View course book to see Full List of Free Electives</button></td>
+    </tr>
+    
+  </tbody>
+  </table>
+  <!------------------------------------------------>
   <table class="table">
     <caption></caption>
   <thead>
@@ -84,13 +105,14 @@
   <tbody>
     <tr>
       <th scope="row">Total units:</th>
-      <td>24</td>
+      <td>{{free_uoc}}</td>
       
       <td><button type="button" class="btn btn-outline-danger">View course book to see Full List of Free Electives</button></td>
     </tr>
     
   </tbody>
   </table>
+  <!------------------------------------------------>
   <table class="table">
     <caption></caption>
   <thead>
@@ -104,7 +126,7 @@
   <tbody>
     <tr>
       <th scope="row">Total units:</th>
-      <td>12</td>
+      <td>{{gene_uoc}}</td>
       
       <td><button type="button" class="btn btn-outline-danger">View course book to see Full List of Free Electives</button></td>
     </tr>

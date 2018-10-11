@@ -56,7 +56,6 @@ def step2(program_code, commence_year, major):
 #########################################step3 preperation##########################################################
 		#this post request is to progress to step 3 after all the courses have done are input
 		if request.form["submit"] == "continue":
-			#list_separated = '-'.join(selected_courses_code)
 			return redirect(url_for("step3", program_code=program_code, commence_year=commence_year, major=major))
 ####################################################################################################################
 	# selected_courses_code_name append code and course_name
@@ -88,7 +87,7 @@ def step3(program_code, commence_year, major):
 	#################################################################################################################
 		
 				
-	return render_template('step3.html', program_code = program_code, commence_year = commence_year, major = major, remaining_core_all_info = remaining_core_all_info)
+	return render_template('step3.html', program_code = program_code, commence_year = commence_year, major = major, remaining_core_all_info = remaining_core_all_info, elective_uoc = 1, free_uoc = 2, gene_uoc = 3)
 
 # @app.route("/step2/<program_code>/<commence_year>/<major>", methods=["GET", "POST"])
 # def step2(program_code, commence_year, major):
