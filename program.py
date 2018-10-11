@@ -8,6 +8,14 @@ def get_all_programs_info():
 	results = dbselect(query, payload)
 	return results
 
+def get_program(program_code):
+	query = "SELECT * FROM PROGRAM WHERE program_code = ?"
+	payload = (program_code,)
+	results = dbselect(query, payload)
+	if len(results) == 0:
+		return None
+
+	return results[0]
 '''
 #######testing######
 results = get_all_programs_info()
@@ -23,9 +31,32 @@ def get_all_programs_code_name():
 		results.append([i[0],i[2]])
 	return results;
 
+#get the UOC of general education course without consideration of what courses have been done, return e.g 36 for(6 courses)
+def get_gene_uoc(program_code, commence_year):
+	prog = get_program(program_code)
+	if prog is None:
+		# invalid prog code
+		return 0
+
+	return prog[3]
+
+#get the UOC of free_elective without consideration of what courses have been done, return e.g 36 for(6 courses)
+def get_free_uoc(program_code, commence_year):
+	prog = get_program(program_code)
+	if prog is None:
+		# invalid prog code
+		return 0
+		
+	return prog[4]
 '''
 #######testing######
 results = get_all_programs_code_name()
 for r in results:
 	print(r)
 '''
+
+# Test get_gene_uoc
+assert(get_gene_uoc('3778', '2019') == 12)
+
+# Test get_free_uoc
+assert(get_free_uoc('3778', '2019') == 36)

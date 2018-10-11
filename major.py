@@ -31,13 +31,24 @@ for r in results:
 	print(r)
 '''
 
-
 #get the UOC of Major_Required_ELECTIVEs without consideration of what courses have been done, return e.g 36 for(6 courses)
-def get_elective_uoc(program_code, commence_year, major_code):
+def get_elective_uoc(commence_year, major_code):
+	query = "SELECT * FROM MAJOR_REQUIRED_ELECTIVE WHERE major_code = ?"
+	payload = (major_code,)
+	results = dbselect(query, payload)
 
-#get the UOC of general education course without consideration of what courses have been done, return e.g 36 for(6 courses)
-def get_gene_uoc(program_code, commence_year, major_code):
+	# Right now, I'm just summing up the total elective uoc and not
+	# differentiating on the basis of what level etc., & also not taking into
+	# account the specific elective table
+	group= -1
+	uoc_sum = 0
+	for result in results:
+		curr_group = result[4]
+		if curr_group != group:
+			uoc_sum += result[3]
+			group = curr_group
 
-#get the UOC of free_elective without consideration of what courses have been done, return e.g 36 for(6 courses)
-def get_free_uoc(program_code, commence_year, major_code):
+	return uoc_sum
 
+# Test get_elective_uoc
+assert(get_elective_uoc('2019', 'COMPA1') == 30)
