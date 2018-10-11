@@ -35,12 +35,15 @@ def step1():
 	all_majors = get_majors_of_a_program(3778, 2019)
 	return render_template('step1.html', all_programs = all_programs, all_majors = all_majors)
 
+
+
 #need to justify having this 2 variable out here again later
 selected_courses_code = []
 selected_courses_code_name = []
 @app.route('/step2/<program_code>/<commence_year>/<major>', methods=["GET", "POST"])
 def step2(program_code, commence_year, major):
 	if request.method == "POST":
+#########################################step2 preperation##########################################################
 		#this post request is for adding courses
 		if request.form["submit"] == "add":
 			#get program_code form request.form, need error handling
@@ -48,10 +51,14 @@ def step2(program_code, commence_year, major):
 			#check if the same code has been input before already
 			if program_code not in selected_courses_code:
 				selected_courses_code.append(program_code)
-		#this post request is to progress tos step 3 after all the courses have done are input
+####################################################################################################################
+
+#########################################step3 preperation##########################################################
+		#this post request is to progress to step 3 after all the courses have done are input
 		if request.form["submit"] == "continue":
-			list_separated = '-'.join(selected_courses_code)
+			#list_separated = '-'.join(selected_courses_code)
 			return redirect(url_for("step3", program_code=program_code, commence_year=commence_year, major=major))
+####################################################################################################################
 	# selected_courses_code_name append code and course_name
 	for code in selected_courses_code:
 		course_name = get_course_by_course_code(code)[1]
@@ -66,6 +73,9 @@ def step2(program_code, commence_year, major):
 
 @app.route('/step3/<program_code>/<commence_year>/<major>', methods=["GET", "POST"])
 def step3(program_code, commence_year, major):
+	
+	#####################################CSE only###################################################################
+	#get all the remainning core course
 	#cse is a bit special in terms of prgram structure, need to address this later
 	remaining_core_all_info = []
 	if program_code == "3778":
@@ -75,7 +85,7 @@ def step3(program_code, commence_year, major):
 		for course_code in remaining_required_courses:
 			c = get_course_by_course_code(course_code)
 			remaining_core_all_info.append(c)
-
+	#################################################################################################################
 		
 				
 	return render_template('step3.html', program_code = program_code, commence_year = commence_year, major = major, remaining_core_all_info = remaining_core_all_info)

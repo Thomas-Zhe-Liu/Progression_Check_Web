@@ -89,7 +89,7 @@ CREATE TABLE MAJOR_REQUIRED_ELECTIVE
 	major_code TEXT,
 	course_prefix TEXT, --what kind of the course is
 	course_level INTEGER, --what level the course has to be at
-	course_amount INTEGER, --how many this lvl courses needs to be taken, if exists interchangeable courses, the course_aount in each relevant tuple will be the same
+	course_amount INTEGER, --how many this lvl courses needs to be taken, if exists interchangeable courses, the course_amount in each relevant tuple will be the same
 	group_id INTEGER, --interchangable courses will have the same group id
 	PRIMARY KEY(major_code, course_level, group_id),
 	FOREIGN KEY(major_code) REFERENCES MAJOR(major_code)
