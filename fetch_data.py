@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 import re
 import sqlite3
 import sys
+from selenium import webdriver
+import time
 
 # global url info I'll use
 hb_base = "https://www.handbook.unsw.edu.au"
@@ -220,7 +222,12 @@ def get_excluded(soup):
 
 def get_terms(soup):
     ret_list = [0, 0, 0, 0]
-    terms = soup.find("div", class_="o-attributes-table").find_all("div", recursive=False)[3].find("p").text
+    terms = soup.find("div", class_="o-attributes-table").find_all("div", recursive=False)[3]
+    # check course is still offered
+    if not terms.find("strong", text=re.compile(r'^Offering Terms')):
+        return ret_list
+
+    terms = terms.find("p").text
     # assume csv
     terms = terms.split(",")
     for term in terms:
@@ -405,6 +412,7 @@ def get_courses(course_links, flex):
             # already have this course object in the dict
             continue
 
+        print("Curr course: " + course_code)
         # go to course page
         course_page = requests.get(course_link);
         course_soup = BeautifulSoup(course_page.content, 'html.parser')
@@ -434,6 +442,9 @@ def get_courses(course_links, flex):
 
         # get terms offered
         terms = get_terms(course_soup)
+        if not terms:
+            # course is no longer offered
+            continue
         gened = is_gened(course_soup)
         Courses[course_code] = Course(course_code, course_name, terms[0], terms[1], terms[2], terms[3], prereqs, excluded, flex, gened)
 
@@ -445,8 +456,33 @@ def get_courses(course_links, flex):
     go through at the start the entire course list on the UNSW handbook and
     insert them into the db
 '''
+# need to open a browser so I can click button to show all courses
 home_page = requests.get(hb_base)
-home_soup = BeautifulSoup(home.content, 'html.parser')
+home_soup = BeautifulSoup(home_page.content, 'html.parser')
+subject_areas = home_soup.find("div", id="tab_educational_area")
+for subject in subject_areas.find_all("a", recursive=False):
+    # just computer science for now
+    if re.match(r'/ComputerScience', subject['href']) is None:
+        continue
+
+    driver = webdriver.Chrome()
+    driver.get(hb_base + subject['href'])
+
+    # click undergrad course button to show all courses
+    undergrad = driver.find_element_by_id("subjectUndergraduate")
+    while re.match(r'No', undergrad.find_element_by_class_name('a-browse-more-controls-btn').get_attribute('innerHTML')) is None:
+        element = undergrad.find_element_by_class_name('a-browse-more-controls-btn')
+        element.click()
+        time.sleep(2)
+
+    subject_soup = BeautifulSoup(driver.page_source, features="lxml")
+    ugrad_courses = subject_soup.find("div", id="subjectUndergraduate").find_all("a", recursive=False)
+    course_links = []
+    for course in ugrad_courses:
+        # remove all the parameters in the url
+        course_links.append(hb_base + course['href'].split('?')[0].strip())
+    driver.close()
+    get_courses(course_links, False)
 
 '''
     Go through each program and insert the program, its majors and
