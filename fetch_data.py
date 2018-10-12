@@ -111,23 +111,6 @@ def get_major_links(card):
 
     return ret_list
 
-def get_elective_links(soup):
-    ret_list = []
-    search_results = soup.find("ul", {'aria-label' : 'Search results'})
-    if search_results is None:
-        print("no search results sad")
-        return ret_list 
-    print("yay search results")
-
-    items = search_results.find_all("li")
-    for item in items:
-        course_link = item.find("a")
-        if course_link is None:
-            continue
-        ret_list.append(course_link['href'])
-
-    return ret_list
-
 def get_flex_links(card, program):
     ret_list = []
     # get number of courses that must be taken in the list
@@ -211,24 +194,6 @@ def get_majors(major_links, prog_code):
                             info = course.find("p", text=re.compile(r'^any'))
                             lv = re.search(r'level (\d+)', info.text).group(1)
                             level_electives.append([lv, elective_uoc, groupid])
-                            # go to the link to get all the possible courses so they can be inserted into db
-                            elective_search = course.find("a")['href']
-                            '''
-                            if elective_search is not None:
-                                elective_url = hb_base + elective_search
-                                elective_url = elective_url.strip()
-                                elective_list = requests.get(elective_url)
-                                #print("url: " + elective_url)
-                                elective_soup = BeautifulSoup(elective_list.content, 'html.parser')
-                                #print(elective_soup.prettify())
-                                elective_links = get_elective_links(elective_soup)
-                                # can just ignore the elective list returned coz I don't need to
-                                # link them to anything
-                                # electives = get_courses(elective_links, False)
-                                #TEST
-                                for elective in elective_links:
-                                    print(elective)
-                            '''
 
         # there are cases where courses are double listed e.g. in "CEICDH", so make major_cores unique
         # same for specific electives e.g. COMPN1
@@ -475,6 +440,18 @@ def get_courses(course_links, flex):
     return ret_list
 
 #testing = ['3778', '3707', '3502']
+'''
+    UNSW search isn't working from requests so to make sure we get all courses
+    go through at the start the entire course list on the UNSW handbook and
+    insert them into the db
+'''
+home_page = requests.get(hb_base)
+home_soup = BeautifulSoup(home.content, 'html.parser')
+
+'''
+    Go through each program and insert the program, its majors and
+    its electives into the db
+'''
 testing = ['3778']
 for table in code_soup.find_all("table"):
 
