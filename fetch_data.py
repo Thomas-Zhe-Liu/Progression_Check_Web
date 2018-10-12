@@ -412,7 +412,6 @@ def get_courses(course_links, flex):
             # already have this course object in the dict
             continue
 
-        print("Curr course: " + course_code)
         # go to course page
         course_page = requests.get(course_link);
         course_soup = BeautifulSoup(course_page.content, 'html.parser')
