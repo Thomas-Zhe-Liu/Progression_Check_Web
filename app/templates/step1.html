@@ -17,8 +17,11 @@
         <ul class="nav navbar-nav navbar-right">
           <li><a href="#">About</a></li>
           <li><a href="/step1">Check Progression</a></li>
-          <li><a href="#">Help</a></li>
-          <li><a href="#">Login</a></li>
+          {% if current_user.is_authenticated %}
+          <li><a href="/logout">Log Out</a></li>
+            {% else %}
+            <li><a href="/login">Login</a></li>
+            {% endif %}
         </ul>
       </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
@@ -69,6 +72,26 @@
               {% endfor %}      
             </select>
           </div>
+
+          <h4>4. Select your current Year.</h4>
+          <div class="form-group">
+            <select class="form-control" id="exampleFormControlSelect1" name="currentYear">
+              {% for year in current_years %}
+              <option>Year 1</option>
+              {% endfor %}      
+            </select>
+          </div>
+
+          <h4>5. Select your current Semester.</h4>
+          <div class="form-group">
+            <select class="form-control" id="exampleFormControlSelect1" name="currentSemester">
+              {% for semester in all_semesters %}
+              <option>Semester 1</option>
+              {% endfor %}      
+            </select>
+          </div>
+
+
           <input type="submit" class= "btn btn-primary pull-right" value="Submit"/>
         </form>
       </div>    

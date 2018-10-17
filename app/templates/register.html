@@ -29,21 +29,23 @@
 
 
 <body>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
     <div style="padding-left: 0.5cm">
     <h1>Register</h1>
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <p>
-            {{ form.username.label }}<br>
-            {{ form.username(size=32) }}<br>
-            {% for error in form.username.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.email.label }}<br>
-            {{ form.email(size=64) }}<br>
-            {% for error in form.email.errors %}
+            {{ form.zid.label }}<br>
+            {{ form.zid(size=32) }}<br>
+            {% for error in form.zid.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
