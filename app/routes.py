@@ -6,7 +6,7 @@ from core_course import *
 from program import *
 from major import *
 #import weasyprint
-from app.forms import RegisterForm
+#from app.forms import RegisterForm
 
 
 #@app.route("/", methods=["GET", "POST"])
@@ -83,9 +83,10 @@ def step3(program_code, commence_year, major):
 	#cse is a bit special in terms of prgram structure, need to address this later
 	if program_code == "3778":
 		#get all the uoc requirement of major_requried_electives, general education and free_electives: e.g. elective_uoc = 36
-		elective_uoc = get_elective_uoc(commence_year,major);
-		gene_uoc = get_gene_uoc(program_code, commence_year);
-		free_uoc = get_free_uoc(program_code, commence_year);
+		elective_uoc = get_elective_uoc(commence_year,major)
+		gene_uoc = get_gene_uoc(program_code, commence_year)
+		free_uoc = get_free_uoc(program_code, commence_year)
+		#specific_elective_UOC = get_specific_elective_UOC(commence_year, major_code)
 
 		#initilize 3 lists in accordance to let the courses being filtered be appended into this list
 
