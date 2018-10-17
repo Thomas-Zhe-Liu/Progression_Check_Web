@@ -1,9 +1,13 @@
+
 from app import app
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request, url_for, flash
 from course import *
 from core_course import *
 from program import *
 from major import *
+#import weasyprint
+from app.forms import RegisterForm
+
 
 #@app.route("/", methods=["GET", "POST"])
 @app.route('/')
@@ -114,10 +118,20 @@ def step3(program_code, commence_year, major):
 			remaining_core_all_info.append(c)
 
 	#################################################################################################################
-		
-				
+	#pdf = weasyprint.HTML('http://localhost:5000/',program_code,'/',commence_year,'/',major).write_pdf('/tmp/example.pdf')
+
 	return render_template('step3.html', program_code = program_code, commence_year = commence_year, major = major, remaining_core_all_info = remaining_core_all_info, elective_uoc = elective_uoc, free_uoc = free_uoc, gene_uoc = gene_uoc)
 
 # @app.route("/step2/<program_code>/<commence_year>/<major>", methods=["GET", "POST"])
 # def step2(program_code, commence_year, major):
 # 	return render_template('step2.html', program_code = program_code, commence_year = commence_year, major = major)
+
+@app.route('/register', methods=['GET','POST'])
+def register():
+	form = RegisterForm()
+	if form.validate_on_submit():
+		print('validated')
+		flash('validated')
+		return redirect(url_for("index"))
+
+	return render_template('register.html', form=form)
