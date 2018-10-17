@@ -6,7 +6,8 @@ from core_course import *
 from program import *
 from major import *
 #import weasyprint
-from app.forms import RegisterForm
+from app.models import Users
+from app.forms import RegisterForm, LoginForm
 from flask_login import current_user, logout_user, login_user, login_required, login_manager
 
 
@@ -28,6 +29,9 @@ def index():
 @app.route('/step1', methods=["GET", "POST"])
 def step1():
 	#user input program_code, commence_year and major code, get these data and redirect to step2.html
+	if current_user.is_autheticated:
+		flash('You must be logged in to use this functionality')
+		return redirect(url_for('login'))
 	if request.method == "POST":
 		#request.form["program"] return 3778 Computer Science, we need to get 3778
 		program_code = request.form["program"].split()[0]
