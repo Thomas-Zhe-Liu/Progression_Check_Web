@@ -7,6 +7,7 @@ from program import *
 from major import *
 #import weasyprint
 from app.forms import RegisterForm
+from flask_login import current_user, logout_user, login_user, login_required, login_manager
 
 
 #@app.route("/", methods=["GET", "POST"])
@@ -141,3 +142,55 @@ def register():
 @app.route('/step4')
 def step4():
     return render_template('step4.html')
+
+@app.route('/register', methods=['GET','POST'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        #print('validated')
+        #   flash('validated')
+        conn = sqlite3.connect('Gradget.db')
+        cursor = conn.cursor()
+        cursor.execute("select * from USER where z_ID = ?", (form.zid.data,))
+
+        #cursor.execute("select * from USER")
+
+        user = cursor.fetchone()
+        print(user)
+        if user is None:
+            print(form.password.data)
+            cursor.execute("insert into USER values(?,?)", (form.zid.data, form.password.data))
+            conn.commit()
+            conn.close()
+            flash('You have been successfully registered')
+            return redirect(url_for("index"))
+        flash('This user is already registered')
+
+    return render_template('register.html', form=form)
+
+
+@app.route('/login', methods=['GET','POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = Users(form.zid.data,form.password.data)
+        if not user.is_authenticated():
+        #if user is None:
+            flash("Invalid credentials")
+            return redirect(url_for('login'))
+
+        login_user(user)
+        print('logged in as ', user.z_id)
+        print('current user is ', current_user.z_id)
+        flash('You have been successfully logged in', current_user.z_id)
+
+        return redirect(url_for('index'))
+    return render_template('login.html', form=form)
+
+
+@app.route('/logout', methods=['GET','POST'])
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+
