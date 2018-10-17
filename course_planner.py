@@ -18,7 +18,7 @@ def plan_courses(schedule,remaining_courses, starting_semester):
 			schedule_count += 1
 			break
 	return schedule
-
+'''
 #test plan_courses for core courses
 schedule = [[],[],[],[],[],[],[],[],[]]
 courses = get_core_courses('COMPA1', 2019)
@@ -32,4 +32,4 @@ specific_electives = determine_specific_electives(specific_elective_groups)
 print("specfic electives:" , specific_electives)
 schedule = plan_courses(schedule, specific_electives,2)
 print("schedule fore specific elective: ",schedule)
-
+'''
