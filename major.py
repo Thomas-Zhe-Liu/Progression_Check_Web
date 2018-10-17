@@ -49,15 +49,51 @@ def get_elective_uoc(commence_year, major_code):
 			group = curr_group
 
 	return uoc_sum
+#returns the number of groups of specific elective in the input major
+def get_specific_electives_groups(commence_year, major_code):
+	query = "SELECT COUNT(DISTINCT group_id) FROM MAJOR_REQUIRED_ELECTIVE_SPECIFIC WHERE major_code = ?"
+	payload = (major_code,)
+	results = dbselect(query, payload)
+	return results[0][0]
 
+
+#returns all the major_required_specific courses, for each result in results, result[0] is major code, reesult[1] is course_code, result[2] is course
+#amount which indicates how many of these specific courses need to be completed as a group, result[3] is the group_id of this course to reflect which group
+#the course is in
 def get_specific_electives(commence_year, major_code):
 	query = "SELECT * FROM MAJOR_REQUIRED_ELECTIVE_SPECIFIC WHERE major_code = ?"
 	payload = (major_code,)
 	results = dbselect(query, payload)
-
-	# return the array of required electives with groupid
 	return results
 
+
+#this fucntion takes the finished course_code and returns the list of courses that needs to be done, remainig_elective[0] is the course_code, 
+#remainig_elective[1] is the UOC left for that group, NOTE in CSE , each major has only one group of specific electives
+def remaining_specific_electives(selected_course_code, commence_year, major_code):
+
+	#to be deleted list of courses
+	finised_UOC = 0
+	remainig_electives  = list()
+	all_specific_courses = get_specific_electives(commence_year, major_code)
+	#group_amount = get_specific_electives_groups(commence_year, major_code)
+	for elective in all_specific_courses:
+		if elective[1] in selected_course_code:		
+			finised_UOC += 6
+		else:
+			remainig_electives.append([elective[1], elective[2]])
+	for elective in remainig_electives:
+			elective[1] -= finised_UOC	
+	
+	return remainig_electives
+
+#Test remaining_specific_electives	
+electives = remaining_specific_electives(['COMP9313'], 2019, 'COMPD1')
+assert(len(electives) == 4)
+#Test get_specific_electives_groups
+group_amount = get_specific_electives_groups(2019, 'COMPD1')
+assert(group_amount == 1)
+group_amount = get_specific_electives_groups(2019, 'COMPA1')
+assert(group_amount == 0)
 # Test get_elective_uoc
 assert(get_elective_uoc('2019', 'COMPA1') == 30)
 # Test get_specific_electives
