@@ -14,7 +14,7 @@ from flask_login import current_user, logout_user, login_user, login_required, l
 #@app.route("/", methods=["GET", "POST"])
 @app.route('/')
 def index():
-    return render_template('index.html')
+	return render_template('index.html')
 
 # def index():
 # 	if request.method == "POST":
@@ -29,7 +29,7 @@ def index():
 @app.route('/step1', methods=["GET", "POST"])
 def step1():
 	#user input program_code, commence_year and major code, get these data and redirect to step2.html
-	if current_user.is_autheticated:
+	if not current_user.is_authenticated:
 		flash('You must be logged in to use this functionality')
 		return redirect(url_for('login'))
 	if request.method == "POST":
@@ -131,70 +131,61 @@ def step3(program_code, commence_year, major):
 # def step2(program_code, commence_year, major):
 # 	return render_template('step2.html', program_code = program_code, commence_year = commence_year, major = major)
 
-@app.route('/register', methods=['GET','POST'])
-def register():
-	form = RegisterForm()
-	if form.validate_on_submit():
-		print('validated')
-		flash('validated')
-		return redirect(url_for("index"))
-
-	return render_template('register.html', form=form)
-
 
 #@app.route("/", methods=["GET", "POST"])
 @app.route('/step4')
 def step4():
-    return render_template('step4.html')
+	return render_template('step4.html')
 
 @app.route('/register', methods=['GET','POST'])
 def register():
-    form = RegisterForm()
-    if form.validate_on_submit():
-        #print('validated')
-        #   flash('validated')
-        conn = sqlite3.connect('Gradget.db')
-        cursor = conn.cursor()
-        cursor.execute("select * from USER where z_ID = ?", (form.zid.data,))
+	form = RegisterForm()
+	if form.validate_on_submit():
+		#print('validated')
+		#   flash('validated')
+		conn = sqlite3.connect('Gradget.db')
+		cursor = conn.cursor()
+		cursor.execute("select * from USER where z_ID = ?", (form.zid.data,))
 
-        #cursor.execute("select * from USER")
+		#cursor.execute("select * from USER")
 
-        user = cursor.fetchone()
-        print(user)
-        if user is None:
-            print(form.password.data)
-            cursor.execute("insert into USER values(?,?)", (form.zid.data, form.password.data))
-            conn.commit()
-            conn.close()
-            flash('You have been successfully registered')
-            return redirect(url_for("index"))
-        flash('This user is already registered')
+		user = cursor.fetchone()
+		print(user)
+		if user is None:
+			print(form.password.data)
+			cursor.execute("insert into USER values(?,?)", (form.zid.data, form.password.data))
+			conn.commit()
+			conn.close()
+			flash('You have been successfully registered')
+			return redirect(url_for("index"))
+		flash('This user is already registered')
 
-    return render_template('register.html', form=form)
+	return render_template('register.html', form=form)
 
 
 @app.route('/login', methods=['GET','POST'])
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = Users(form.zid.data,form.password.data)
-        if not user.is_authenticated():
-        #if user is None:
-            flash("Invalid credentials")
-            return redirect(url_for('login'))
+	form = LoginForm()
+	if form.validate_on_submit():
+		user = Users(form.zid.data,form.password.data)
+		if not user.is_authenticated():
+		#if user is None:
+			flash("Invalid credentials")
+			return redirect(url_for('login'))
 
-        login_user(user)
-        print('logged in as ', user.z_id)
-        print('current user is ', current_user.z_id)
-        flash('You have been successfully logged in', current_user.z_id)
+		login_user(user)
+		print('logged in as ', user.z_id)
+		print('current user is ', current_user.z_id)
+		flash('You have been successfully logged in', current_user.z_id)
 
-        return redirect(url_for('index'))
-    return render_template('login.html', form=form)
+		return redirect(url_for('index'))
+	return render_template('login.html', form=form)
 
 
 @app.route('/logout', methods=['GET','POST'])
 def logout():
-    logout_user()
-    return redirect(url_for('index'))
+	logout_user()
+	flash('You have been successfully logged out')
+	return redirect(url_for('index'))
 
 
