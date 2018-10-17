@@ -48,15 +48,3 @@ def get_free_uoc(program_code, commence_year):
 		return 0
 		
 	return prog[4]
-'''
-#######testing######
-results = get_all_programs_code_name()
-for r in results:
-	print(r)
-'''
-
-# Test get_gene_uoc
-assert(get_gene_uoc('3778', '2019') == 12)
-
-# Test get_free_uoc
-assert(get_free_uoc('3778', '2019') == 36)
