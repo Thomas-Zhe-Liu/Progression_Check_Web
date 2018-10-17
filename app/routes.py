@@ -125,6 +125,8 @@ def step3(program_code, commence_year, major):
 		remaining_core_all_info = []
 		#get all the remaining course code
 		remaining_required_courses = get_remaining_cores(program_code, commence_year, major, selected_courses_code)
+		# sort the remainin_required_course based on their list
+		remaining_required_courses = sort_courses(remaining_required_courses)
 		#get all the remaining course code
 		for course_code in remaining_required_courses:
 			c = get_course_by_course_code(course_code)

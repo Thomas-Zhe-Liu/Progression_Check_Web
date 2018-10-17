@@ -16,8 +16,18 @@ def get_course_by_course_code(course_code):
 for r in results:
 	print(r)
 '''
-
-
+#get offered semesters by cours_code
+def get_offered_semesters(course_code):
+	query = "SELECT t1, t2, t3 FROM COURSE WHERE course_code = ?"
+	payload = (course_code,)
+	results = dbselect(query, payload)
+	results = results[0]
+	return results
+'''
+#test get_offered_semester
+semesters = get_offered_semesters('COMP1531')
+print(semesters)
+'''
 #check if it is core, return true if the course if so , false otherwise
 def is_core(program_code, commence_year, major_code, course_code):
 	# TODO check if it's a program core - not relevant for COMPSCI
