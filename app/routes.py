@@ -6,7 +6,7 @@ from core_course import *
 from program import *
 from major import *
 #import weasyprint
-from app.forms import RegisterForm
+#from app.forms import RegisterForm
 
 
 #@app.route("/", methods=["GET", "POST"])

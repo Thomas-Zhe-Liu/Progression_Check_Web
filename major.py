@@ -50,5 +50,22 @@ def get_elective_uoc(commence_year, major_code):
 
 	return uoc_sum
 
+def get_specific_electives(commence_year, major_code):
+	query = "SELECT * FROM MAJOR_REQUIRED_ELECTIVE_SPECIFIC WHERE major_code = ?"
+	payload = (major_code,)
+	results = dbselect(query, payload)
+
+	# return the array of required electives with groupid
+	return results
+
 # Test get_elective_uoc
 assert(get_elective_uoc('2019', 'COMPA1') == 30)
+# Test get_specific_electives
+db_electives = get_specific_electives('2019', 'COMPA1')
+assert(len(db_electives) == 0)
+db_electives = get_specific_electives('2019', 'COMPD1')
+expected_db_electives = ['COMP6714', 'COMP9313', 'COMP9315', 'COMP9318', 'COMP9319']
+for elective in db_electives:
+	expected_db_electives.remove(elective[1])
+
+assert(len(expected_db_electives) == 0)
