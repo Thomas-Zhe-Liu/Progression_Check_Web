@@ -1,5 +1,4 @@
 from helper_functions import *
-from course import *
 
 #get_core_course based on major_code and commence_year
 #this function assumes that major_code is unique- no 2 major has the sam emajor code, commence year not used for this function right now
