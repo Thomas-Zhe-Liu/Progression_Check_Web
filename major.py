@@ -105,7 +105,7 @@ groups = get_specific_elective_groups(2019, 'COMPD1')
 assert(len(groups) == 1)
 assert(groups[0].group_uoc == 18)
 expected_db_electives = ['COMP6714', 'COMP9313', 'COMP9315', 'COMP9318', 'COMP9319']
-assert(len(set(expected_db_electives) - set(groups[0].group_course_list)) == 0)
+assert(set(expected_db_electives) == set(groups[0].group_course_list))
 
 # Test is_specific_elective()
 assert(is_specific_elective('2019', 'COMP6714', groups) == True)

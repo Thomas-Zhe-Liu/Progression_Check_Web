@@ -106,7 +106,7 @@ def step3(program_code, commence_year, major):
 				print("core")
 				continue
 			elif is_specific_elective(commence_year, major_code, course, elective_groups):
-				# do nothing, above function takes care of it
+				# do nothing, above function will modify the UOC in the appropriate group
 				continue
 			elif(is_elective(program_code, commence_year, major, course_code) and elective_uoc - 6 >= 0):
 				elective_uoc -= 6
@@ -124,7 +124,7 @@ def step3(program_code, commence_year, major):
 		#get all the remainning core course
 		remaining_core_all_info = []
 		#get all the remaining course code
-		remaining_required_courses = cse_get_remaining_cores(program_code, commence_year, major, selected_courses_code)
+		remaining_required_courses = get_remaining_cores(program_code, commence_year, major, selected_courses_code)
 		#get all the remaining course code
 		for course_code in remaining_required_courses:
 			c = get_course_by_course_code(course_code)
