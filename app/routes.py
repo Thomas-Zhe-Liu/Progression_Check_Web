@@ -127,11 +127,15 @@ def step3(program_code, commence_year, major):
 		remaining_required_courses = get_remaining_cores(program_code, commence_year, major, selected_courses_code)
 		# sort the remainin_required_course based on their list
 		remaining_required_courses = sort_courses(remaining_required_courses)
+		#######################################step4#####################################
+		if request.method == "POST":
+			if request.form["submit"] == "continue":
+				print("hello")
+				redirect(url_for("step4", program_code=program_code, commence_year=commence_year, major=major))
 		#get all the remaining course code
 		for course_code in remaining_required_courses:
 			c = get_course_by_course_code(course_code)
 			remaining_core_all_info.append(c)
-
 	#################################################################################################################
 	#pdf = weasyprint.HTML('http://localhost:5000/',program_code,'/',commence_year,'/',major).write_pdf('/tmp/example.pdf')
 
@@ -142,10 +146,9 @@ def step3(program_code, commence_year, major):
 # 	return render_template('step2.html', program_code = program_code, commence_year = commence_year, major = major)
 
 
-#@app.route("/", methods=["GET", "POST"])
-@app.route('/step4')
+@app.route('/step4/<program_code>/<commence_year>/<major>', methods=["GET", "POST"])
 def step4():
-	return render_template('step4.html')
+	return render_template('step4.html', program_code = program_code, commence_year = commence_year, major = major)
 
 @app.route('/register', methods=['GET','POST'])
 def register():
