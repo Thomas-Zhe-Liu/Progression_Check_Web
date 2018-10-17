@@ -1,5 +1,11 @@
 from helper_functions import *
 
+
+class elective_group():
+	def __init__(self, group_uoc, group_course_list):
+		self.group_uoc = group_uoc
+		self.group_course_list = group_course_list
+
 # get all major info based on program_code and commence year for each result in results results[0] = major_code, results[1] = major_name
 # results[2] = how many lv1 electives, results[3] = how many lv2 electives,
 #results[4] = how many lv3 electives, results[5] = program_code, results[6] = commence year
@@ -49,26 +55,55 @@ def get_elective_uoc(commence_year, major_code):
 			group = curr_group
 
 	return uoc_sum
+
+# //TODO return array of elective_group objects
 #returns the number of groups of specific elective in the input major
+'''
 def get_specific_electives_groups(commence_year, major_code):
 	query = "SELECT COUNT(DISTINCT group_id) FROM MAJOR_REQUIRED_ELECTIVE_SPECIFIC WHERE major_code = ?"
 	payload = (major_code,)
 	results = dbselect(query, payload)
 	return results[0][0]
+'''
 
+def get_specific_electives_groups(commence_year, major_code):
+	query = "SELECT course_code, course_amount, group_id UOC FROM MAJOR_REQUIRED_ELECTIVE_SPECIFIC WHERE major_code = ? ORDER BY group_id"
+	payload = (major_code,)
+	results = dbselect(query, payload)
+	if len(results) == 0:
+		return [[]]
 
+	elective_groups = []
+	elective_list = []
+	curr_group_id = 0
+	curr_uoc = results[0][1]
+	for result in results:
+		if result[2] != curr_group_id:
+			# new group
+			elective_groups.append(elective_group(curr_uoc, elective_list))
+			elective_list_list = []
+			curr_uoc = result[1]
+			curr_group_id += 1
+		
+		elective_list.append(result[0])
+
+	return elective_groups
+
+	
 #returns all the major_required_specific courses, for each result in results, result[0] is major code, reesult[1] is course_code, result[2] is course
 #amount which indicates how many of these specific courses need to be completed as a group, result[3] is the group_id of this course to reflect which group
 #the course is in
+'''
 def get_specific_electives(commence_year, major_code):
 	query = "SELECT * FROM MAJOR_REQUIRED_ELECTIVE_SPECIFIC WHERE major_code = ?"
 	payload = (major_code,)
 	results = dbselect(query, payload)
 	return results
-
+'''
 
 #this fucntion takes the finished course_code and returns the list of courses that needs to be done, remainig_elective[0] is the course_code, 
 #remainig_elective[1] is the UOC left for that group, NOTE in CSE , each major has only one group of specific electives
+'''
 def remaining_specific_electives(selected_course_code, commence_year, major_code):
 
 	#to be deleted list of courses
@@ -85,17 +120,36 @@ def remaining_specific_electives(selected_course_code, commence_year, major_code
 			elective[1] -= finised_UOC	
 	
 	return remainig_electives
+'''
 
+'''
+	This function will check if the course is in an elective group
+	If so, subtract course uoc from that elective group
+'''
+def is_specific_elective(commence_year, course, elective_groups):
+	for group in elective_groups:
+		if course in group.group_course_list and group.group_uoc > 0:
+			group.group_uoc -= 6
+			return True
+
+	return False
+
+'''
 #Test remaining_specific_electives	
 electives = remaining_specific_electives(['COMP9313'], 2019, 'COMPD1')
 assert(len(electives) == 4)
+
 #Test get_specific_electives_groups
 group_amount = get_specific_electives_groups(2019, 'COMPD1')
 assert(group_amount == 1)
 group_amount = get_specific_electives_groups(2019, 'COMPA1')
 assert(group_amount == 0)
+'''
+
 # Test get_elective_uoc
 assert(get_elective_uoc('2019', 'COMPA1') == 30)
+
+'''
 # Test get_specific_electives
 db_electives = get_specific_electives('2019', 'COMPA1')
 assert(len(db_electives) == 0)
@@ -103,5 +157,13 @@ db_electives = get_specific_electives('2019', 'COMPD1')
 expected_db_electives = ['COMP6714', 'COMP9313', 'COMP9315', 'COMP9318', 'COMP9319']
 for elective in db_electives:
 	expected_db_electives.remove(elective[1])
-
 assert(len(expected_db_electives) == 0)
+'''
+
+# Test get_specific_electives_groups
+groups = get_specific_electives_groups(2019, 'COMPD1')
+assert(len(groups) == 1)
+expected_db_electives = ['COMP6714', 'COMP9313', 'COMP9315', 'COMP9318', 'COMP9319']
+assert(groups[0].group_uoc == 18)
+course_list = groups[0].group_course_list
+print(course_list)

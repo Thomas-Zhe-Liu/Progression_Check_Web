@@ -95,6 +95,8 @@ def step3(program_code, commence_year, major):
 		free_uoc = get_free_uoc(program_code, commence_year)
 		#specific_elective_UOC = get_specific_elective_UOC(commence_year, major_code)
 
+		elective_groups = get_specific_elective_groups(commence_year, major)
+
 		#initilize 3 lists in accordance to let the courses being filtered be appended into this list
 
 		#iterate through each course_code in selected_course_code and determine whether this course is core, elective, general education or free elective
@@ -102,7 +104,10 @@ def step3(program_code, commence_year, major):
 			print(course_code)
 			if(is_core(program_code, commence_year, major, course_code)):
 				print("core")
-				continue 
+				continue
+			elif is_specific_elective(commence_year, major_code, course, elective_groups):
+				# do nothing, above function takes care of it
+				continue
 			elif(is_elective(program_code, commence_year, major, course_code) and elective_uoc - 6 >= 0):
 				elective_uoc -= 6
 				print("elective")
