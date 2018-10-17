@@ -56,22 +56,16 @@ def get_elective_uoc(commence_year, major_code):
 
 	return uoc_sum
 
-# //TODO return array of elective_group objects
-#returns the number of groups of specific elective in the input major
 '''
-def get_specific_electives_groups(commence_year, major_code):
-	query = "SELECT COUNT(DISTINCT group_id) FROM MAJOR_REQUIRED_ELECTIVE_SPECIFIC WHERE major_code = ?"
-	payload = (major_code,)
-	results = dbselect(query, payload)
-	return results[0][0]
+	Return an array of class elective group for each specific elective
+	group listed on the major's handbook page
 '''
-
-def get_specific_electives_groups(commence_year, major_code):
+def get_specific_elective_groups(commence_year, major_code):
 	query = "SELECT course_code, course_amount, group_id UOC FROM MAJOR_REQUIRED_ELECTIVE_SPECIFIC WHERE major_code = ? ORDER BY group_id"
 	payload = (major_code,)
 	results = dbselect(query, payload)
 	if len(results) == 0:
-		return [[]]
+		return []
 
 	elective_groups = []
 	elective_list = []
@@ -89,7 +83,53 @@ def get_specific_electives_groups(commence_year, major_code):
 
 	return elective_groups
 
-	
+'''
+	This function will check if the course is in an elective group
+	If so, subtract course uoc from that elective group
+'''
+def is_specific_elective(commence_year, course, elective_groups):
+	for group in elective_groups:
+		if course in group.group_course_list and group.group_uoc > 0:
+			group.group_uoc -= 6
+			return True
+
+	return False
+
+
+# Test get_elective_uoc
+assert(get_elective_uoc('2019', 'COMPA1') == 30)
+
+# Test get_specific_electives_groups
+assert(len(get_specific_elective_groups(2019, 'COMPA1')) == 0)
+groups = get_specific_elective_groups(2019, 'COMPD1')
+assert(len(groups) == 1)
+assert(groups[0].group_uoc == 18)
+expected_db_electives = ['COMP6714', 'COMP9313', 'COMP9315', 'COMP9318', 'COMP9319']
+assert(len(set(expected_db_electives) - set(groups[0].group_course_list)) == 0)
+
+# Test is_specific_elective()
+assert(is_specific_elective('2019', 'COMP6714', groups) == True)
+assert(is_specific_elective('2019', 'COMP1511', groups) == False)
+
+
+###################
+''' 
+	Don't think we'll need any of the functions/tests below.
+	Leaving here just in case
+'''
+###################
+
+# //TODO return array of elective_group objects
+#returns the number of groups of specific elective in the input major
+'''
+def get_specific_electives_groups(commence_year, major_code):
+	query = "SELECT COUNT(DISTINCT group_id) FROM MAJOR_REQUIRED_ELECTIVE_SPECIFIC WHERE major_code = ?"
+	payload = (major_code,)
+	results = dbselect(query, payload)
+	return results[0][0]
+'''
+
+
 #returns all the major_required_specific courses, for each result in results, result[0] is major code, reesult[1] is course_code, result[2] is course
 #amount which indicates how many of these specific courses need to be completed as a group, result[3] is the group_id of this course to reflect which group
 #the course is in
@@ -122,17 +162,6 @@ def remaining_specific_electives(selected_course_code, commence_year, major_code
 	return remainig_electives
 '''
 
-'''
-	This function will check if the course is in an elective group
-	If so, subtract course uoc from that elective group
-'''
-def is_specific_elective(commence_year, course, elective_groups):
-	for group in elective_groups:
-		if course in group.group_course_list and group.group_uoc > 0:
-			group.group_uoc -= 6
-			return True
-
-	return False
 
 '''
 #Test remaining_specific_electives	
@@ -146,9 +175,6 @@ group_amount = get_specific_electives_groups(2019, 'COMPA1')
 assert(group_amount == 0)
 '''
 
-# Test get_elective_uoc
-assert(get_elective_uoc('2019', 'COMPA1') == 30)
-
 '''
 # Test get_specific_electives
 db_electives = get_specific_electives('2019', 'COMPA1')
@@ -159,11 +185,3 @@ for elective in db_electives:
 	expected_db_electives.remove(elective[1])
 assert(len(expected_db_electives) == 0)
 '''
-
-# Test get_specific_electives_groups
-groups = get_specific_electives_groups(2019, 'COMPD1')
-assert(len(groups) == 1)
-expected_db_electives = ['COMP6714', 'COMP9313', 'COMP9315', 'COMP9318', 'COMP9319']
-assert(groups[0].group_uoc == 18)
-course_list = groups[0].group_course_list
-print(course_list)
