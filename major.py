@@ -1,4 +1,5 @@
 from helper_functions import *
+from course import *
 
 
 class elective_group():
@@ -85,15 +86,26 @@ def get_specific_elective_groups(commence_year, major_code):
 
 '''
 	This function will check if the course is in an elective group
-	If so, subtract course uoc from that elective group
+	If so, subtract course uoc from that elective group , and removed the course
 '''
 def is_specific_elective(commence_year, course, elective_groups):
 	for group in elective_groups:
 		if course in group.group_course_list and group.group_uoc > 0:
 			group.group_uoc -= 6
+			group.group_course_list.remove(course)
 			return True
 
 	return False
+
+#returns what specific_electives needs to eb taken
+def determine_specific_electives(elective_groups):
+	electives = []
+	for group in elective_groups:
+		group.group_course_list = sort_courses(group.group_course_list)
+		num_courses = group.group_uoc/6
+		electives += group.group_course_list[:int(num_courses)]
+	return electives
+
 
 
 ###################
