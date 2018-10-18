@@ -138,6 +138,6 @@ def register():
 
 
 #@app.route("/", methods=["GET", "POST"])
-@app.route('/')
+@app.route('/step4')
 def step4():
     return render_template('step4.html')
