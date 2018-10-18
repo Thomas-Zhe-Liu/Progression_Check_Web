@@ -137,96 +137,44 @@
     
   </tbody>
   </table>
-<table class="table">
-    <caption>List of Core Courses to be completed:</caption>
-  <thead>
-    <tr>
-      <th scope="col">Course Code</th>
-      <th scope="col">Name</th>
-      <th scope="col">UOC</th>
-      <th scope="col">Term Offered</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for course in remaining_core_all_info %}
-    <tr>
-      <th scope="row">{{course[0]}}</th>
-      <td>{{course[1]}}</td>
-      <td>6</td>
-      <td>
-        <span class="badge badge-success">Sem1</span>
-        <span class="badge badge-warning">Sem2</span>
-        <span class="badge badge-warning">Sem3</span>
-        <span class="badge badge-info">Summer</span>
-      </td>
-      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-</tr>
-    {% endfor %}  
-  <!--<tr>
-      <th scope="row">COMP3431</th>
-      <td>Robotic Software Architecture</td>
-      <td>6</td>
-      <td>
-        <span class="badge badge-success">Sem1</span>
-        <span class="badge badge-warning">Sem2</span>
-        <span class="badge badge-warning">Sem3</span>
-        <span class="badge badge-info">Summer</span>
-      </td>
-      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-</tr>
-  
-  <tr>
-      <th scope="row">COMP9444</th>
-      <td>Neural Networks</td>
-      <td>6</td>
-      <td>
-        <span class="badge badge-success">Sem1</span>
-        <span class="badge badge-warning">Sem2</span>
-        <span class="badge badge-warning">Sem3</span>
-        <span class="badge badge-info">Summer</span>
-      </td>
-      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-</tr>
-  <tr>
-      <th scope="row">COMP9517</th>
-      <td>Computer Vision</td>
-      <td>6</td>
-      <td>
-        <span class="badge badge-success">Sem1</span>
-        <span class="badge badge-warning">Sem2</span>
-        <span class="badge badge-warning">Sem3</span>
-        <span class="badge badge-info">Summer</span>
-      </td>
-      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-</tr>
-<tr>
-      <th scope="row">COMP4418</th>
-      <td>Knowledge Representation</td>
-      <td>6</td>
-      <td>
-        <span class="badge badge-success">Sem1</span>
-        <span class="badge badge-warning">Sem2</span>
-        <span class="badge badge-warning">Sem3</span>
-        <span class="badge badge-info">Summer</span>
-      </td>
-      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-</tr>
-<tr>
-      <th scope="row">COMP9417</th>
-      <td>Machine Learning &amp; Data Mining</td>
-      <td>6</td>
-      <td>
-        <span class="badge badge-success">Sem1</span>
-        <span class="badge badge-warning">Sem2</span>
-        <span class="badge badge-warning">Sem3</span>
-        <span class="badge badge-info">Summer</span>
-      </td>
-      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-</tr>
--->
-  </tbody>
-  </table>
+
+<p>
+  <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" style="width:750px">
+    List of core courses left to be completed                                                    
+  </a>
+</p>
+<div class="collapse" id="collapseExample">
+  <div class="card card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Course Code</th>
+              <th scope="col">Name</th>
+              <th scope="col">UOC</th>
+              <th scope="col">Term Offered</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for course in remaining_core_all_info %}
+            <tr>
+              <th scope="row">{{course[0]}}</th>
+              <td>{{course[1]}}</td>
+              <td>6</td>
+              <td>
+                <span class="badge badge-success">Sem1</span>
+                <span class="badge badge-warning">Sem2</span>
+                <span class="badge badge-warning">Sem3</span>
+                <span class="badge badge-info">Summer</span>
+              </td>
+              <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
+        </tr>
+            {% endfor %}  
+          </tbody>
+          </table>
+  </div>
+</div>
+
 </div>
       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#previousAlertModal">Previous</button>
       <input type="submit" class= "btn btn-success" name="submit" value="continue"/>
