@@ -69,6 +69,26 @@
               {% endfor %}      
             </select>
           </div>
+
+          <h4>4. Select your current Year</h4>
+          <div class="form-group">
+            <select class="form-control" id="exampleFormControlSelect1" name="currentYear">
+              {% for year in current_years %}
+              <option>Year 1</option>
+              {% endfor %}      
+            </select>
+          </div>
+
+          <h4>5. Select your current Semester</h4>
+          <div class="form-group">
+            <select class="form-control" id="exampleFormControlSelect1" name="currentSemester">
+              {% for semester in all_semesters %}
+              <option>Semester 1</option>
+              {% endfor %}      
+            </select>
+          </div>
+
+          
           <input type="submit" class= "btn btn-primary pull-right" value="Submit"/>
         </form>
       </div>    
