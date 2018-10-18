@@ -42,7 +42,7 @@
         </button>
       </div>
       <div class="modal-body">
-        Are you sure you want to go back? Save your Progression Report now and download it. 
+        Are you sure you want to go back? Save your Course Plan now and download it. 
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -72,76 +72,16 @@
     <legend>Course Plan</legend>
   </fieldset></form>
   <div class="table-responsive">
-  <!------------------------------------------------>
-  <table class="table">
-    <caption></caption>
-  <thead>
-    <tr>
-      <th scope="col">Computing Electives to be completed:</th>
-      <th scope="col"></th>
-      <th scope="col"></th>    
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">Total units:</th>
-      <td>{{elective_uoc}}</td>
-      
-      <td><button type="button" class="btn btn-outline-danger">View course book to see Full List of Free Electives</button></td>
-    </tr>
-    
-  </tbody>
-  </table>
-  <!------------------------------------------------>
-  <table class="table">
-    <caption></caption>
-  <thead>
-    <tr>
-      <th scope="col">Free Electives to be completed:</th>
-      <th scope="col"></th>
-      <th scope="col"></th>
-      
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">Total units:</th>
-      <td>{{free_uoc}}</td>
-      
-      <td><button type="button" class="btn btn-outline-danger">View course book to see Full List of Free Electives</button></td>
-    </tr>
-    
-  </tbody>
-  </table>
-  <!------------------------------------------------>
-  <table class="table">
-    <caption></caption>
-  <thead>
-    <tr>
-      <th scope="col">General Electives to be completed:</th>
-      <th scope="col"></th>
-      <th scope="col"></th>
-      
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">Total units:</th>
-      <td>{{gene_uoc}}</td>
-      
-      <td><button type="button" class="btn btn-outline-danger">View course book to see Full List of Free Electives</button></td>
-    </tr>
-    
-  </tbody>
-  </table>
+<!-- #######################################################################################-->
+<h4>Year 1</h4>
 <table class="table">
-    <caption>List of Core Courses to be completed:</caption>
+    <h5>Trimester 1</h5>
   <thead>
     <tr>
       <th scope="col">Course Code</th>
       <th scope="col">Name</th>
       <th scope="col">UOC</th>
-      <th scope="col">Term Offered</th>
+      <th scope="col">Other terms offered in</th>
       <th scope="col"></th>
     </tr>
   </thead>
@@ -158,11 +98,28 @@
         <span class="badge badge-info">Summer</span>
       </td>
       <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-</tr>
+    </tr>
     {% endfor %}  
-  <!--<tr>
-      <th scope="row">COMP3431</th>
-      <td>Robotic Software Architecture</td>
+  </tbody>
+  </table>
+
+  <!------------------------------------------------>
+<table class="table">
+    <h5>Trimester 2</h5>
+  <thead>
+    <tr>
+      <th scope="col">Course Code</th>
+      <th scope="col">Name</th>
+      <th scope="col">UOC</th>
+      <th scope="col">Other terms offered in</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for course in remaining_core_all_info %}
+    <tr>
+      <th scope="row">{{course[0]}}</th>
+      <td>{{course[1]}}</td>
       <td>6</td>
       <td>
         <span class="badge badge-success">Sem1</span>
@@ -171,11 +128,28 @@
         <span class="badge badge-info">Summer</span>
       </td>
       <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-</tr>
-  
-  <tr>
-      <th scope="row">COMP9444</th>
-      <td>Neural Networks</td>
+    </tr>
+    {% endfor %}  
+  </tbody>
+  </table>
+
+  <!------------------------------------------------>
+<table class="table">
+    <h5>Trimester 3</h5>
+  <thead>
+    <tr>
+      <th scope="col">Course Code</th>
+      <th scope="col">Name</th>
+      <th scope="col">UOC</th>
+      <th scope="col">Other terms offered in</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for course in remaining_core_all_info %}
+    <tr>
+      <th scope="row">{{course[0]}}</th>
+      <td>{{course[1]}}</td>
       <td>6</td>
       <td>
         <span class="badge badge-success">Sem1</span>
@@ -184,10 +158,29 @@
         <span class="badge badge-info">Summer</span>
       </td>
       <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-</tr>
-  <tr>
-      <th scope="row">COMP9517</th>
-      <td>Computer Vision</td>
+    </tr>
+    {% endfor %}  
+  </tbody>
+  </table>
+
+<!-- #######################################################################################-->
+<h4>Year 2</h4>
+<table class="table">
+    <h5>Trimester 1</h5>
+  <thead>
+    <tr>
+      <th scope="col">Course Code</th>
+      <th scope="col">Name</th>
+      <th scope="col">UOC</th>
+      <th scope="col">Other terms offered in</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for course in remaining_core_all_info %}
+    <tr>
+      <th scope="row">{{course[0]}}</th>
+      <td>{{course[1]}}</td>
       <td>6</td>
       <td>
         <span class="badge badge-success">Sem1</span>
@@ -196,10 +189,28 @@
         <span class="badge badge-info">Summer</span>
       </td>
       <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-</tr>
-<tr>
-      <th scope="row">COMP4418</th>
-      <td>Knowledge Representation</td>
+    </tr>
+    {% endfor %}  
+  </tbody>
+  </table>
+
+  <!------------------------------------------------>
+<table class="table">
+    <h5>Trimester 2</h5>
+  <thead>
+    <tr>
+      <th scope="col">Course Code</th>
+      <th scope="col">Name</th>
+      <th scope="col">UOC</th>
+      <th scope="col">Other terms offered in</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for course in remaining_core_all_info %}
+    <tr>
+      <th scope="row">{{course[0]}}</th>
+      <td>{{course[1]}}</td>
       <td>6</td>
       <td>
         <span class="badge badge-success">Sem1</span>
@@ -208,10 +219,28 @@
         <span class="badge badge-info">Summer</span>
       </td>
       <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-</tr>
-<tr>
-      <th scope="row">COMP9417</th>
-      <td>Machine Learning &amp; Data Mining</td>
+    </tr>
+    {% endfor %}  
+  </tbody>
+  </table>
+
+  <!------------------------------------------------>
+<table class="table">
+    <h5>Trimester 3</h5>
+  <thead>
+    <tr>
+      <th scope="col">Course Code</th>
+      <th scope="col">Name</th>
+      <th scope="col">UOC</th>
+      <th scope="col">Other terms offered in</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for course in remaining_core_all_info %}
+    <tr>
+      <th scope="row">{{course[0]}}</th>
+      <td>{{course[1]}}</td>
       <td>6</td>
       <td>
         <span class="badge badge-success">Sem1</span>
@@ -220,8 +249,99 @@
         <span class="badge badge-info">Summer</span>
       </td>
       <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-</tr>
--->
+    </tr>
+    {% endfor %}  
+  </tbody>
+  </table>
+
+  <!-- #######################################################################################-->
+<h4>Year 3</h4>
+<table class="table">
+    <h5>Trimester 1</h5>
+  <thead>
+    <tr>
+      <th scope="col">Course Code</th>
+      <th scope="col">Name</th>
+      <th scope="col">UOC</th>
+      <th scope="col">Other terms offered in</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for course in remaining_core_all_info %}
+    <tr>
+      <th scope="row">{{course[0]}}</th>
+      <td>{{course[1]}}</td>
+      <td>6</td>
+      <td>
+        <span class="badge badge-success">Sem1</span>
+        <span class="badge badge-warning">Sem2</span>
+        <span class="badge badge-warning">Sem3</span>
+        <span class="badge badge-info">Summer</span>
+      </td>
+      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
+    </tr>
+    {% endfor %}  
+  </tbody>
+  </table>
+
+  <!------------------------------------------------>
+<table class="table">
+    <h5>Trimester 2</h5>
+  <thead>
+    <tr>
+      <th scope="col">Course Code</th>
+      <th scope="col">Name</th>
+      <th scope="col">UOC</th>
+      <th scope="col">Other terms offered in</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for course in remaining_core_all_info %}
+    <tr>
+      <th scope="row">{{course[0]}}</th>
+      <td>{{course[1]}}</td>
+      <td>6</td>
+      <td>
+        <span class="badge badge-success">Sem1</span>
+        <span class="badge badge-warning">Sem2</span>
+        <span class="badge badge-warning">Sem3</span>
+        <span class="badge badge-info">Summer</span>
+      </td>
+      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
+    </tr>
+    {% endfor %}  
+  </tbody>
+  </table>
+
+  <!------------------------------------------------>
+<table class="table">
+    <h5>Trimester 3</h5>
+  <thead>
+    <tr>
+      <th scope="col">Course Code</th>
+      <th scope="col">Name</th>
+      <th scope="col">UOC</th>
+      <th scope="col">Other terms offered in</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for course in remaining_core_all_info %}
+    <tr>
+      <th scope="row">{{course[0]}}</th>
+      <td>{{course[1]}}</td>
+      <td>6</td>
+      <td>
+        <span class="badge badge-success">Sem1</span>
+        <span class="badge badge-warning">Sem2</span>
+        <span class="badge badge-warning">Sem3</span>
+        <span class="badge badge-info">Summer</span>
+      </td>
+      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
+    </tr>
+    {% endfor %}  
   </tbody>
   </table>
 </div>
