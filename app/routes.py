@@ -135,3 +135,9 @@ def register():
 		return redirect(url_for("index"))
 
 	return render_template('register.html', form=form)
+
+
+#@app.route("/", methods=["GET", "POST"])
+@app.route('/')
+def step4():
+    return render_template('step4.html')
