@@ -148,6 +148,13 @@ CREATE TABLE PREREQUISITE
 	FOREIGN KEY(prerequisite_course) REFERENCES COURSE(course_code)
 );
 
+CREATE TABLE USER
+(
+	z_ID INTEGER PRIMARY KEY,
+	password TEXT
+);
+--INSERT INTO USER (z_ID, password) VALUES (5000000, 'password');
+
 --INSERT INTO PREREQUISITE (course_code, program_code, commence_year, prerequisite_course, group_id) VALUES ('MATH1131', 'COMP3978',2016, 'MATH1231',1);
 
 -- Below is manually entered data for COMPA1 electives, just for demonstration purposes. Programatic way of getting these in is pending with James :)
