@@ -5,6 +5,7 @@ from course import *
 from core_course import *
 from program import *
 from major import *
+from course_planner import *
 #import weasyprint
 #from app.forms import RegisterForm
 from app.models import Users
@@ -129,9 +130,8 @@ def step3(program_code, commence_year, major):
 		remaining_required_courses = sort_courses(remaining_required_courses)
 		#######################################step4#####################################
 		if request.method == "POST":
-			#if request.form["submit"] == "continue":
-			print("6")
-			return redirect(url_for("step4", program_code=program_code, commence_year=commence_year, major=major))
+			if request.form["submit"] == "continue":
+				return redirect(url_for("step4", program_code=program_code, commence_year=commence_year, major=major))
 		#get all the remaining course code
 		for course_code in remaining_required_courses:
 			c = get_course_by_course_code(course_code)
@@ -141,15 +141,20 @@ def step3(program_code, commence_year, major):
 
 	return render_template('step3.html', program_code = program_code, commence_year = commence_year, major = major, remaining_core_all_info = remaining_core_all_info, elective_uoc = elective_uoc, free_uoc = free_uoc, gene_uoc = gene_uoc)
 
-# @app.route("/step2/<program_code>/<commence_year>/<major>", methods=["GET", "POST"])
-# def step2(program_code, commence_year, major):
-# 	return render_template('step2.html', program_code = program_code, commence_year = commence_year, major = major)
 
 
-@app.route('/step4/<program_code>/<commence_year>/<major>', methods=["GET", "POST"])
+@app.route('/step4/<program_code>/<commence_year>/<major>/', methods=["GET", "POST"])
 def step4(program_code, commence_year, major):
-	print("step4")
-	return render_template('step4.html', program_code = program_code, commence_year = commence_year, major = major)
+	#initalize a new scehdule 
+	schedule = [[],[],[],[],[],[],[],[],[]]
+	#sort the remaining course 
+	remaining_required_courses = get_remaining_cores(program_code, commence_year, major, selected_courses_code)
+	remaining_required_courses = sort_courses(remaining_required_courses)
+	#schedule based on remaining core course
+	schedule = plan_courses(schedule,remaining_required_courses, 1)
+	print(schedule)
+
+	return render_template('step4.html', program_code = program_code, commence_year = commence_year, major = major, schedule = schedule)
 
 @app.route('/register', methods=['GET','POST'])
 def register():

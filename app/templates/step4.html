@@ -75,6 +75,40 @@
     <legend>Course Plan</legend>
   </fieldset></form>
   <div class="table-responsive">
+
+<!-- #######################################################################################-->
+<h4>Planner</h4>
+<table class="table">
+    <h5>Trimester 1</h5>
+  <thead>
+    <tr>
+      <th scope="col">Course Code</th>
+      <th scope="col">Name</th>
+      <th scope="col">UOC</th>
+      <th scope="col">Other terms offered in</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% set sem_count = 2 %}
+    {% for semester in schedule %}
+      {{sem_count}}
+    <tr>
+      <th scope="row">{{semester[0]}}</th>
+      <td>6</td>
+      <td>
+        <span class="badge badge-success">Sem1</span>
+        <span class="badge badge-warning">Sem2</span>
+        <span class="badge badge-warning">Sem3</span>
+        <span class="badge badge-info">Summer</span>
+      </td>
+      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
+    </tr>
+    {% endfor %}  
+  </tbody>
+  </table>
+
+
 <!-- #######################################################################################-->
 <h4>Year 1</h4>
 <table class="table">

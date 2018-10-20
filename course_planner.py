@@ -24,8 +24,7 @@ schedule = [[],[],[],[],[],[],[],[],[]]
 courses = get_core_courses('COMPA1', 2019)
 sorted_courses = sort_courses(courses)
 schedule = plan_courses(schedule,sorted_courses, 2)
-print("schedule fore core courses: ",schedule)
-
+print("schedule bfore core courses: ",schedule)
 #test plan_courses for major required specific courses
 specific_elective_groups = get_specific_elective_groups(2019, 'COMPD1')
 specific_electives = determine_specific_electives(specific_elective_groups)
