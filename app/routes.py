@@ -41,7 +41,9 @@ def step1():
 		commence_year = int(request.form["c_year"])
 		#request.form["major"] return COMPA1 COMPUTER SCIENCE, we need to get COMPA1
 		major = request.form["major"].split()[0]
-		return redirect(url_for("step2", program_code = program_code, commence_year = commence_year, major = major))
+		current_year = request.form["current_year"]
+		current_sem = request.form["current_semester"].split()[1]
+		return redirect(url_for("step2", program_code = program_code, commence_year = commence_year, major = major, current_year = current_year, current_sem = current_sem))
 	all_programs = get_all_programs_code_name()
 	#hard coded needs to replace later
 	all_majors = get_majors_of_a_program(3778, 2019)
@@ -54,8 +56,8 @@ def step1():
 selected_courses_code = []
 #this list is for step 2 to display the slected course only
 selected_courses_code_name = []
-@app.route('/step2/<program_code>/<commence_year>/<major>', methods=["GET", "POST"])
-def step2(program_code, commence_year, major):
+@app.route('/step2/<program_code>/<commence_year>/<major>/<current_year>/<current_sem>', methods=["GET", "POST"])
+def step2(program_code, commence_year, major, current_year, current_sem):
 	if request.method == "POST":
 #########################################step2 preperation##########################################################
 		#this post request is for adding courses
@@ -70,7 +72,7 @@ def step2(program_code, commence_year, major):
 #########################################step3 preperation##########################################################
 		#this post request is to progress to step 3 after all the courses have done are input
 		if request.form["submit"] == "continue":
-			return redirect(url_for("step3", program_code=program_code, commence_year=commence_year, major=major))
+			return redirect(url_for("step3", program_code=program_code, commence_year=commence_year, major=major, current_year = current_year, current_sem = current_sem))
 ####################################################################################################################
 	# selected_courses_code_name append code and course_name
 	for code in selected_courses_code:
@@ -84,8 +86,8 @@ def step2(program_code, commence_year, major):
 
 
 #the system filter out from selected_courses_code, get lists: remaining_core_all_info , finished_electives, finished_genes, finished_free_electives
-@app.route('/step3/<program_code>/<commence_year>/<major>', methods=["GET", "POST"])
-def step3(program_code, commence_year, major):
+@app.route('/step3/<program_code>/<commence_year>/<major>/<current_year>/<current_sem>', methods=["GET", "POST"])
+def step3(program_code, commence_year, major, current_year, current_sem):
 	
 	#####################################CSE only###################################################################
 	#cse is a bit special in terms of prgram structure, need to address this later
@@ -131,7 +133,7 @@ def step3(program_code, commence_year, major):
 		#######################################step4#####################################
 		if request.method == "POST":
 			if request.form["submit"] == "continue":
-				return redirect(url_for("step4", program_code=program_code, commence_year=commence_year, major=major))
+				return redirect(url_for("step4", program_code=program_code, commence_year=commence_year, major=major, current_year = current_year, current_sem = current_sem))
 		#get all the remaining course code
 		for course_code in remaining_required_courses:
 			c = get_course_by_course_code(course_code)
@@ -143,8 +145,8 @@ def step3(program_code, commence_year, major):
 
 
 
-@app.route('/step4/<program_code>/<commence_year>/<major>/', methods=["GET", "POST"])
-def step4(program_code, commence_year, major):
+@app.route('/step4/<program_code>/<commence_year>/<major>/<current_year>/<current_sem>', methods=["GET", "POST"])
+def step4(program_code, commence_year, major, current_year, current_sem):
 	#initalize a new scehdule 
 	schedule = [[],[],[],[],[],[],[],[],[]]
 	#sort the remaining course 
