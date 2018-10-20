@@ -155,11 +155,11 @@
   </table>
 
   <p>
-    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" style="width:750px">
+    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample1" role="button" aria-expanded="false" aria-controls="collapseExample" style="width:750px">
       List of available Free Electives                                                 
     </a>
   </p>
-  <div class="collapse" id="collapseExample">
+  <div class="collapse" id="collapseExample1">
     <div class="card card-body">
           <table class="table">
             <thead>
@@ -213,11 +213,11 @@
   </table>
 
   <p>
-    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" style="width:750px">
+    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample2" role="button" aria-expanded="false" aria-controls="collapseExample" style="width:750px">
       List of available General Electives                                                    
     </a>
   </p>
-  <div class="collapse" id="collapseExample">
+  <div class="collapse" id="collapseExample2">
     <div class="card card-body">
           <table class="table">
             <thead>
@@ -230,7 +230,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for course in remaining_core_all_info %}
+              {% for course in kremaining_core_all_info %}
               <tr>
                 <th scope="row">{{course[0]}}</th>
                 <td>{{course[1]}}</td>
@@ -248,13 +248,14 @@
             </table>
     </div>
   </div>
-
   <p>
-    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" style="width:750px">
+  <table class="table">
+   <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample3" role="button" aria-expanded="false" aria-controls="collapseExample" style="width:750px">
       List of core courses left to be completed                                                    
     </a>
+    </table>
   </p>
-  <div class="collapse" id="collapseExample">
+  <div class="collapse" id="collapseExample3">
     <div class="card card-body">
           <table class="table">
             <thead>
@@ -285,7 +286,9 @@
             </table>
     </div>
   </div>
+<!---------------------------->
 
+<!----------------------------->
 </div>
     <form method="POST" role="form"> 
       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#previousAlertModal">Previous</button>

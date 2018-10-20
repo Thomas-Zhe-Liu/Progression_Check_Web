@@ -20,3 +20,27 @@ def change_db(command, payload=None):
     cursor.execute(command, payload)
     connection.commit()
     connection.close()
+
+
+def next_planner_year(current_year, current_semester):
+	current_year = int(current_year)
+	current_semester = int(current_semester)
+	if(current_semester == 3):
+		return(current_year + 1)
+	return current_year
+
+def next_planner_semester(current_semester):
+	current_semester = int(current_semester)
+	if(current_semester == 3):
+		return 1
+	return (current_semester + 1)
+
+'''
+#test for next_planner_year
+print(next_planner_year(2019, 2))
+print(next_planner_year(2019, 3))
+
+#test for next_planner_semester
+print(next_planner_semester(1))
+print(next_planner_semester(3))
+'''
