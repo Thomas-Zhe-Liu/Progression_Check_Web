@@ -129,9 +129,9 @@ def step3(program_code, commence_year, major):
 		remaining_required_courses = sort_courses(remaining_required_courses)
 		#######################################step4#####################################
 		if request.method == "POST":
-			if request.form["submit"] == "continue":
-				print("hello")
-				redirect(url_for("step4", program_code=program_code, commence_year=commence_year, major=major))
+			#if request.form["submit"] == "continue":
+			print("6")
+			return redirect(url_for("step4", program_code=program_code, commence_year=commence_year, major=major))
 		#get all the remaining course code
 		for course_code in remaining_required_courses:
 			c = get_course_by_course_code(course_code)
@@ -147,7 +147,8 @@ def step3(program_code, commence_year, major):
 
 
 @app.route('/step4/<program_code>/<commence_year>/<major>', methods=["GET", "POST"])
-def step4():
+def step4(program_code, commence_year, major):
+	print("step4")
 	return render_template('step4.html', program_code = program_code, commence_year = commence_year, major = major)
 
 @app.route('/register', methods=['GET','POST'])
