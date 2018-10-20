@@ -105,7 +105,6 @@ def step3(program_code, commence_year, major, current_year, current_sem):
 
 		#iterate through each course_code in selected_course_code and determine whether this course is core, elective, general education or free elective
 		for course_code in selected_courses_code:
-			print(course_code)
 			if(is_core(program_code, commence_year, major, course_code)):
 				continue
 			elif is_specific_elective(commence_year, course_code, elective_groups):
@@ -122,7 +121,6 @@ def step3(program_code, commence_year, major, current_year, current_sem):
 			elif(free_uoc - 6 >= 0):
 				finished_free_electives.append(course_code)
 				free_uoc -= 6
-		print(finished_electives)
 		#get all the remaining course code
 		remaining_required_courses = get_remaining_cores(program_code, commence_year, major, selected_courses_code)
 		# sort the remainin_required_course based on their list
@@ -134,9 +132,13 @@ def step3(program_code, commence_year, major, current_year, current_sem):
 
 	#################################################################################################################
 	#pdf = weasyprint.HTML('http://localhost:5000/',program_code,'/',commence_year,'/',major).write_pdf('/tmp/example.pdf')
-	finished_electives_all_info = get_course_list_with_name(finished_electives)
+	#create a new list that has the name of a course to display
 	remaining_core_all_info = get_course_list_with_name(remaining_required_courses)
-	return render_template('step3.html', program_code = program_code, commence_year = commence_year, major = major, remaining_core_all_info = remaining_core_all_info, elective_uoc = elective_uoc, free_uoc = free_uoc, gene_uoc = gene_uoc, finished_electives_all_info = finished_electives_all_info)
+	finished_electives_all_info = get_course_list_with_name(finished_electives)
+	finished_genes_all_info = get_course_list_with_name(finished_genes)
+	finished_free_electives_all_info = get_course_list_with_name(finished_free_electives)
+	
+	return render_template('step3.html', program_code = program_code, commence_year = commence_year, major = major, remaining_core_all_info = remaining_core_all_info, elective_uoc = elective_uoc, free_uoc = free_uoc, gene_uoc = gene_uoc, finished_electives_all_info = finished_electives_all_info, finished_genes_all_info = finished_genes_all_info, finished_free_electives_all_info = finished_free_electives_all_info)
 
 
 
