@@ -56,10 +56,6 @@
           <h4>2. Select the year you started your Program.</h4>
           <div class="form-group">
             <select class="form-control" id="exampleFormControlSelect1" name="c_year">
-              <option>2015</option>
-              <option>2016</option>
-              <option>2017</option>
-              <option>2018</option>
               <option>2019</option>
             </select>
           </div>
@@ -76,18 +72,16 @@
           <h4>4. Select your current Year.</h4>
           <div class="form-group">
             <select class="form-control" id="exampleFormControlSelect1" name="currentYear">
-              {% for year in current_years %}
-              <option>Year 1</option>
-              {% endfor %}      
+              <option>2019</option>    
             </select>
           </div>
 
           <h4>5. Select your current Semester.</h4>
           <div class="form-group">
             <select class="form-control" id="exampleFormControlSelect1" name="currentSemester">
-              {% for semester in all_semesters %}
               <option>Semester 1</option>
-              {% endfor %}      
+              <option>Semester 2</option>
+              <option>Semester 3</option>   
             </select>
           </div>
 
