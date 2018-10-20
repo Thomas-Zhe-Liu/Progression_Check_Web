@@ -84,7 +84,10 @@ def step2(program_code, commence_year, major, current_year, current_sem):
 	return render_template('step2.html', program_code = program_code, commence_year = commence_year, major = major, selected_courses_code_name = selected_courses_code_name)
 
 
-
+#initilize 3 lists in accordance to let the courses being filtered be appended into a  list
+finished_electives = []
+finished_genes = []
+finished_free_electives = []
 #the system filter out from selected_courses_code, get lists: remaining_core_all_info , finished_electives, finished_genes, finished_free_electives
 @app.route('/step3/<program_code>/<commence_year>/<major>/<current_year>/<current_sem>', methods=["GET", "POST"])
 def step3(program_code, commence_year, major, current_year, current_sem):
@@ -100,32 +103,26 @@ def step3(program_code, commence_year, major, current_year, current_sem):
 
 		elective_groups = get_specific_elective_groups(commence_year, major)
 
-		#initilize 3 lists in accordance to let the courses being filtered be appended into this list
-
 		#iterate through each course_code in selected_course_code and determine whether this course is core, elective, general education or free elective
 		for course_code in selected_courses_code:
 			print(course_code)
 			if(is_core(program_code, commence_year, major, course_code)):
-				print("core")
 				continue
-			elif is_specific_elective(commence_year, major_code, course, elective_groups):
+			elif is_specific_elective(commence_year, course_code, elective_groups):
 				# do nothing, above function will modify the UOC in the appropriate group
 				continue
 			elif(is_elective(program_code, commence_year, major, course_code) and elective_uoc - 6 >= 0):
 				elective_uoc -= 6
-				print("elective")
+				finished_electives.append(course_code)
 				continue
 			elif(is_gene(commence_year, course_code) and gene_uoc - 6 >= 0):
-				print(course_code)
-				print("gene")
+				finished_genes.append(course_code)
 				gene_uoc -= 6
 				continue
 			elif(free_uoc - 6 >= 0):
-				print("free")
+				finished_free_electives.append(course_code)
 				free_uoc -= 6
-
-		#get all the remainning core course
-		remaining_core_all_info = []
+		print(finished_electives)
 		#get all the remaining course code
 		remaining_required_courses = get_remaining_cores(program_code, commence_year, major, selected_courses_code)
 		# sort the remainin_required_course based on their list
@@ -134,14 +131,12 @@ def step3(program_code, commence_year, major, current_year, current_sem):
 		if request.method == "POST":
 			if request.form["submit"] == "continue":
 				return redirect(url_for("step4", program_code=program_code, commence_year=commence_year, major=major, current_year = current_year, current_sem = current_sem))
-		#get all the remaining course code
-		for course_code in remaining_required_courses:
-			c = get_course_by_course_code(course_code)
-			remaining_core_all_info.append(c)
+
 	#################################################################################################################
 	#pdf = weasyprint.HTML('http://localhost:5000/',program_code,'/',commence_year,'/',major).write_pdf('/tmp/example.pdf')
-
-	return render_template('step3.html', program_code = program_code, commence_year = commence_year, major = major, remaining_core_all_info = remaining_core_all_info, elective_uoc = elective_uoc, free_uoc = free_uoc, gene_uoc = gene_uoc)
+	finished_electives_all_info = get_course_list_with_name(finished_electives)
+	remaining_core_all_info = get_course_list_with_name(remaining_required_courses)
+	return render_template('step3.html', program_code = program_code, commence_year = commence_year, major = major, remaining_core_all_info = remaining_core_all_info, elective_uoc = elective_uoc, free_uoc = free_uoc, gene_uoc = gene_uoc, finished_electives_all_info = finished_electives_all_info)
 
 
 

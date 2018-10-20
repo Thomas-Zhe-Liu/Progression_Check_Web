@@ -16,6 +16,19 @@ def get_course_by_course_code(course_code):
 for r in results:
 	print(r)
 '''
+#take a list of course code and returns a list of coursescode + it name
+def get_course_list_with_name(course_list):
+	new_list = []
+	#get all the remaining course code
+	for course_code in course_list:
+		c = get_course_by_course_code(course_code)
+		new_list.append([c[0], c[1]])
+	return new_list
+'''
+#test get_course_list_with_name
+l = ['MATH1081', 'MATH1131']
+print(get_course_list_with_name(l))
+'''
 #get offered semesters by cours_code
 def get_offered_semesters(course_code):
 	query = "SELECT t1, t2, t3 FROM COURSE WHERE course_code = ?"
