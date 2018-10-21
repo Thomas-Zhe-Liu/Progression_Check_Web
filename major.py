@@ -16,12 +16,6 @@ def get_all_major_info(program_code, commence_year):
 	results = dbselect(query, payload)
 	return results
 
-'''
-##testing#####
-results = get_all_major_info(3778, 2019)
-for r in results:
-	print(r)
-'''
 
 # get all the major code and name beased on program_code and commence_year, results[0] = major_code, results[1] = major_name
 def get_majors_of_a_program(program_code, commence_year):
@@ -31,12 +25,6 @@ def get_majors_of_a_program(program_code, commence_year):
 		results.append([i[0],i[1]])
 	return results;
 
-'''
-#######testing######
-results = get_majors_of_a_program(3778, 2019)
-for r in results:
-	print(r)
-'''
 
 #get the UOC of Major_Required_ELECTIVEs without consideration of what courses have been done, return e.g 36 for(6 courses)
 def get_elective_uoc(commence_year, major_code):

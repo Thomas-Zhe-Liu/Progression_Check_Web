@@ -11,11 +11,6 @@ def get_course_by_course_code(course_code):
 	results = dbselect(query, payload)
 	results = results[0]
 	return results
-'''
-## testing##############
-for r in results:
-	print(r)
-'''
 #take a list of course code and returns a list of coursescode + it name
 def get_course_list_with_name(course_list):
 	new_list = []
@@ -24,11 +19,6 @@ def get_course_list_with_name(course_list):
 		c = get_course_by_course_code(course_code)
 		new_list.append([c[0], c[1]])
 	return new_list
-'''
-#test get_course_list_with_name
-l = ['MATH1081', 'MATH1131']
-print(get_course_list_with_name(l))
-'''
 #get offered semesters by cours_code
 def get_offered_semesters(course_code):
 	query = "SELECT t1, t2, t3 FROM COURSE WHERE course_code = ?"
@@ -36,11 +26,7 @@ def get_offered_semesters(course_code):
 	results = dbselect(query, payload)
 	results = results[0]
 	return results
-'''
-#test get_offered_semester
-semesters = get_offered_semesters('MATH1081')
-print(semesters)
-'''
+
 #check if it is core, return true if the course if so , false otherwise
 def is_core(program_code, commence_year, major_code, course_code):
 	# TODO check if it's a program core - not relevant for COMPSCI
@@ -120,11 +106,7 @@ def excluded(course_code, selected_courses_code):
 		if results:
 			return True
 	return False
-'''
-#test excluded
-print(excluded('MATH1131', ['MATH1141', 'COMP1531']))
-print(excluded('MATH1131', ['COMP1531', 'COMP1531']))
-'''
+
 def get_excluded_course(course_code):
 	excluded_courses = []
 	query = "SELECT * FROM EXCLUDE WHERE course_code = ?"
@@ -133,11 +115,8 @@ def get_excluded_course(course_code):
 	for result in results:
 		excluded_courses.append(result[3])
 	return excluded_courses
-'''
-#test get_excluded_course
-print(get_excluded_course('MATH1131'))
-'''
 #pass, program_code, commence_year and courses_have_done(course_code) to return a list of core_courses that should be dont later
+
 def get_remaining_cores(program_code, commence_year, major_code, courses_have_done):
 	all_cores = get_core_courses(major_code, commence_year)
 	#sort and reverse all the cores to imply take MATH1131 rather than MATH1141(low level)
@@ -158,12 +137,6 @@ def get_remaining_cores(program_code, commence_year, major_code, courses_have_do
 			all_cores.remove(course_code)
 	return list(set(all_cores) - set(courses_have_done))
 	 
-'''
-#test get remaining cores
-print(sort_courses(get_remaining_cores(3778,2019,'COMPA1',[])))
-print(sort_courses(get_remaining_cores(3778,2019,'COMPA1',['MATH1131','MATH1141'])))
-print(sort_courses(get_remaining_cores(3778,2019,'COMPA1',['MATH1131'])))
-'''
 #check if the course is valid course
 def is_valid_course(course_code):
 	query = "SELECT * FROM COURSE WHERE course_code = ?"
@@ -172,8 +145,4 @@ def is_valid_course(course_code):
 	if results:
 		return True
 	return False
-'''
-#test is_valid_course
-print(is_valid_course('comp1531'))
-print(is_valid_course('COMP511'))
-'''
+

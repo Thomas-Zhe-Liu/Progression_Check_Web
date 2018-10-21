@@ -11,5 +11,3 @@ def get_core_courses(major_code, commence_year):
 	for r in results:
 		f_results.append(r[0])
 	return f_results
-
-

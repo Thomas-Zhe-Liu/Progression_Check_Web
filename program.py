@@ -16,12 +16,6 @@ def get_program(program_code):
 		return None
 
 	return results[0]
-'''
-#######testing######
-results = get_all_programs_info()
-for r in results:
-	print(r)
-'''
 
 #get all the programs code and name program[0] = program_code, program[1] = program name
 def get_all_programs_code_name():
