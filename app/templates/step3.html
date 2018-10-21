@@ -75,6 +75,65 @@
     <legend>Progression Check Report</legend>
   </fieldset></form>
   <div class="table-responsive">
+  {% if specific_uoc%}
+  <table class="table">
+    <caption></caption>
+    <thead>
+    <tr>
+      <th scope="col">Major Specific Electives to be completed:</th>
+      <th scope="col"></th>
+      <th scope="col"></th>    
+    </tr>
+    </thead>
+    <tbody>
+      <tr>
+      <th scope="row">Total units:</th>
+      <td>{{specific_uoc}}</td>
+      
+      <td><button type="button" class="btn btn-outline-danger">View course book to see Full List of Free Electives</button></td>
+      </tr>
+    
+    </tbody>
+  </table>
+
+  <p>
+    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" style="width:750px">
+      List of Finished Major Specific Electives                                                  
+    </a>
+    </p>
+    <div class="collapse" id="collapseExample">
+    <div class="card card-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Course Code</th>
+                <th scope="col">Name</th>
+                <th scope="col">UOC</th>
+                <th scope="col">Term Offered</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for course in finished_specific_electives_all_info %}
+              <tr>
+                <th scope="row">{{course[0]}}</th>
+                <td>{{course[1]}}</td>
+                <td>6</td>
+                <td>
+                  <span class="badge badge-success">Sem1</span>
+                  <span class="badge badge-warning">Sem2</span>
+                  <span class="badge badge-warning">Sem3</span>
+                  <span class="badge badge-info">Summer</span>
+                </td>
+                <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
+          </tr>
+              {% endfor %}  
+            </tbody>
+            </table>
+    </div>
+  </div>
+  <!------------------------------------------------>
+  {% endif %}
   <!------------------------------------------------>
   <table class="table">
     <caption></caption>
