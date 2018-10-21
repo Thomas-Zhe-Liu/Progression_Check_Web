@@ -19,15 +19,6 @@ from flask_login import current_user, logout_user, login_user, login_required, l
 def index():
 	return render_template('index.html')
 
-# def index():
-# 	if request.method == "POST":
-# 		program_code = request.form["program_code"]
-# 		#check if it is a integer, beeter be drop list
-# 		commence_year = int(request.form["commence_year"])
-# 		major = request.form["major"]
-# 		#check if all the form is selected
-# 		return redirect(url_for("step2", program_code=program_code, commence_year=commence_year, major=major))
-# 	return render_template('index.html')
 
 @app.route('/step1', methods=["GET", "POST"])
 def step1():
@@ -143,7 +134,7 @@ def step3(program_code, commence_year, major, current_year, current_sem):
 	#######################################step4#####################################
 	if request.method == "POST":
 		if request.form["submit"] == "continue":
-			return redirect(url_for("step4", program_code=program_code, commence_year=commence_year, major=major, current_year = current_year, current_sem = current_sem))
+			return redirect(url_for("step4", program_code=program_code, commence_year=commence_year, major=major, current_year = current_year, current_sem = current_sem, elective_uoc = elective_uoc, free_uoc = free_uoc, gene_uoc = gene_uoc))
 	#get all the remaining course code
 	remaining_required_courses = get_remaining_cores(program_code, commence_year, major, selected_courses_code)
 	# sort the remainin_required_course based on their list
@@ -162,8 +153,8 @@ def step3(program_code, commence_year, major, current_year, current_sem):
 
 
 
-@app.route('/step4/<program_code>/<commence_year>/<major>/<current_year>/<current_sem>', methods=["GET", "POST"])
-def step4(program_code, commence_year, major, current_year, current_sem):
+@app.route('/step4/<program_code>/<commence_year>/<major>/<current_year>/<current_sem>/<elective_uoc>/<free_uoc>/<gene_uoc>', methods=["GET", "POST"])
+def step4(program_code, commence_year, major, current_year, current_sem, elective_uoc, free_uoc, gene_uoc):
 	#initalize a new scehdule 
 	schedule = [[],[],[],[],[],[],[],[],[]]
 	#sort the remaining course 
@@ -174,21 +165,23 @@ def step4(program_code, commence_year, major, current_year, current_sem):
 	plan_year = next_planner_year(current_year, current_sem)
 	#get the semester of next planner trismester
 	plan_sem = next_planner_semester(current_sem)
-	
-
 	#schedule based on remaining core course
 	schedule = plan_courses(schedule,remaining_required_courses, plan_sem)
 	#schedule based on major specific electives
 	specific_elective_groups = get_specific_elective_groups(current_year, major)
 	specific_electives = determine_specific_electives(specific_elective_groups)
 	schedule = plan_courses(schedule, specific_electives,plan_sem)
-	schedule = clean_planner(schedule)
+	#cleans the lists in schedule before the first list with content
+	schedule = clean_before_planner(schedule)
 	#get names for all the courses
 	schedule_with_name = []
 	for semester in schedule:
 		new_semester = get_course_list_with_name(semester)
 		schedule_with_name.append(new_semester)
-
+	#fit into all the uoc for electives, gene and free elctives
+	schedule_with_name = fit_schedule_with_name(schedule_with_name, elective_uoc, gene_uoc, free_uoc)
+	#now clean the whole schedule- delte all the list without contents
+	schedule_with_name = clean_planner(schedule_with_name)
 	return render_template('step4.html', program_code = program_code, commence_year = commence_year, major = major, plan_year = plan_year, plan_sem = plan_sem, schedule = schedule_with_name)
 
 @app.route('/register', methods=['GET','POST'])
