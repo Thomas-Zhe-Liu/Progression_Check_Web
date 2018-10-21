@@ -64,8 +64,10 @@ def step2(program_code, commence_year, major, current_year, current_sem):
 		if request.form["submit"] == "add":
 			#get program_code form request.form, need error handling
 			program_code = request.form["p_code"]
+			if(program_code == "COMP9999"):
+				flash('Not a valid course, please enter again')
 			#check if the same code has been input before already
-			if program_code not in selected_courses_code:
+			elif program_code not in selected_courses_code:
 				selected_courses_code.append(program_code)
 ####################################################################################################################
 
@@ -88,55 +90,63 @@ def step2(program_code, commence_year, major, current_year, current_sem):
 finished_electives = []
 finished_genes = []
 finished_free_electives = []
+finished_cores = []
 #the system filter out from selected_courses_code, get lists: remaining_core_all_info , finished_electives, finished_genes, finished_free_electives
 @app.route('/step3/<program_code>/<commence_year>/<major>/<current_year>/<current_sem>', methods=["GET", "POST"])
 def step3(program_code, commence_year, major, current_year, current_sem):
 	
 	#####################################CSE only###################################################################
 	#cse is a bit special in terms of prgram structure, need to address this later
-	if program_code == "3778":
-		#get all the uoc requirement of major_requried_electives, general education and free_electives: e.g. elective_uoc = 36
-		elective_uoc = get_elective_uoc(commence_year,major)
-		gene_uoc = get_gene_uoc(program_code, commence_year)
-		free_uoc = get_free_uoc(program_code, commence_year)
-		#specific_elective_UOC = get_specific_elective_UOC(commence_year, major_code)
+	#get all the uoc requirement of major_requried_electives, general education and free_electives: e.g. elective_uoc = 36
+	elective_uoc = get_elective_uoc(commence_year,major)
+	gene_uoc = get_gene_uoc(program_code, commence_year)
+	free_uoc = get_free_uoc(program_code, commence_year)
+	#specific_elective_UOC = get_specific_elective_UOC(commence_year, major_code)
 
-		elective_groups = get_specific_elective_groups(commence_year, major)
+	elective_groups = get_specific_elective_groups(commence_year, major)
+	
+	#iterate through each course_code in selected_course_code and determine whether this course is core, elective, general education or free elective
+	for course_code in selected_courses_code:
+		if(is_core(program_code, commence_year, major, course_code) and not excluded(course_code, finished_cores)):			
+			# it's a core and it is not excluded
+			finished_cores.append(course_code)
+			continue
+		elif is_specific_elective(commence_year, course_code, elective_groups):
+			# do nothing, above function will modify the UOC in the appropriate group
+			continue
+		elif(is_elective(program_code, commence_year, major, course_code) and elective_uoc - 6 >= 0):
+			elective_uoc -= 6
+			finished_electives.append(course_code)
+			continue
+		elif(is_gene(commence_year, course_code) and gene_uoc - 6 >= 0):
+			finished_genes.append(course_code)
+			gene_uoc -= 6
+			continue
+		elif(free_uoc - 6 >= 0):
+			finished_free_electives.append(course_code)
+			free_uoc -= 6
 
-		#iterate through each course_code in selected_course_code and determine whether this course is core, elective, general education or free elective
-		for course_code in selected_courses_code:
-			if(is_core(program_code, commence_year, major, course_code)):
-				continue
-			elif is_specific_elective(commence_year, course_code, elective_groups):
-				# do nothing, above function will modify the UOC in the appropriate group
-				continue
-			elif(is_elective(program_code, commence_year, major, course_code) and elective_uoc - 6 >= 0):
-				elective_uoc -= 6
-				finished_electives.append(course_code)
-				continue
-			elif(is_gene(commence_year, course_code) and gene_uoc - 6 >= 0):
-				finished_genes.append(course_code)
-				gene_uoc -= 6
-				continue
-			elif(free_uoc - 6 >= 0):
-				finished_free_electives.append(course_code)
-				free_uoc -= 6
-		#get all the remaining course code
-		remaining_required_courses = get_remaining_cores(program_code, commence_year, major, selected_courses_code)
-		# sort the remainin_required_course based on their list
-		remaining_required_courses = sort_courses(remaining_required_courses)
-		#######################################step4#####################################
-		if request.method == "POST":
-			if request.form["submit"] == "continue":
-				return redirect(url_for("step4", program_code=program_code, commence_year=commence_year, major=major, current_year = current_year, current_sem = current_sem))
-
+	#######################################step4#####################################
+	if request.method == "POST":
+		if request.form["submit"] == "continue":
+			return redirect(url_for("step4", program_code=program_code, commence_year=commence_year, major=major, current_year = current_year, current_sem = current_sem))
+	#get all the remaining course code
+	remaining_required_courses = get_remaining_cores(program_code, commence_year, major, selected_courses_code)
+	print("1")
+	# sort the remainin_required_course based on their list
+	remaining_required_courses = sort_courses(remaining_required_courses)
+	print("2")
 	#################################################################################################################
 	#pdf = weasyprint.HTML('http://localhost:5000/',program_code,'/',commence_year,'/',major).write_pdf('/tmp/example.pdf')
 	#create a new list that has the name of a course to display
 	remaining_core_all_info = get_course_list_with_name(remaining_required_courses)
+	print("3")
 	finished_electives_all_info = get_course_list_with_name(finished_electives)
+	print("4")
 	finished_genes_all_info = get_course_list_with_name(finished_genes)
+	print("5")
 	finished_free_electives_all_info = get_course_list_with_name(finished_free_electives)
+	print("6")
 	
 	return render_template('step3.html', program_code = program_code, commence_year = commence_year, major = major, remaining_core_all_info = remaining_core_all_info, elective_uoc = elective_uoc, free_uoc = free_uoc, gene_uoc = gene_uoc, finished_electives_all_info = finished_electives_all_info, finished_genes_all_info = finished_genes_all_info, finished_free_electives_all_info = finished_free_electives_all_info)
 

@@ -110,3 +110,72 @@ def sort_method(course_code):
 #sort a list of course code based on their post fix number e.g. MATH1101 come before COMP1200
 def sort_courses(remaining_core_courses):
 	return sorted(remaining_core_courses, key = sort_method)
+
+#take exclusion into consideration, e.g if 1131 is taken, 1231 is taken
+def excluded(course_code, selected_courses_code):
+	for exluded_course in selected_courses_code:
+		query = "SELECT * FROM EXCLUDE WHERE course_code = ? and replaced_course =?"
+		payload = (course_code,exluded_course)
+		results = dbselect(query, payload)
+		if results:
+			return True
+	return False
+'''
+#test excluded
+print(excluded('MATH1131', ['MATH1141', 'COMP1531']))
+print(excluded('MATH1131', ['COMP1531', 'COMP1531']))
+'''
+def get_excluded_course(course_code):
+	excluded_courses = []
+	query = "SELECT * FROM EXCLUDE WHERE course_code = ?"
+	payload = (course_code,)
+	results = dbselect(query, payload)
+	for result in results:
+		excluded_courses.append(result[3])
+	return excluded_courses
+'''
+#test get_excluded_course
+print(get_excluded_course('MATH1131'))
+'''
+#pass, program_code, commence_year and courses_have_done(course_code) to return a list of core_courses that should be dont later
+def get_remaining_cores(program_code, commence_year, major_code, courses_have_done):
+	all_cores = get_core_courses(major_code, commence_year)
+	#sort and reverse all the cores to imply take MATH1131 rather than MATH1141(low level)
+	all_cores = sort_courses(all_cores)
+	all_cores.reverse()
+	#handles if MATH1131 is taken, then MATH1141 should not be in the remaining core 
+	for course_code in courses_have_done:
+		if(excluded(course_code, all_cores)):
+			excluded_courses = get_excluded_course(course_code)
+			for c in excluded_courses:
+				try:
+					all_cores.remove(c)
+				except ValueError:
+					pass
+	#handles if MATH1131 is taken, then MATH1241 should not be in the remaining core 
+	for course_code in all_cores:
+		if(excluded(course_code, all_cores)):
+			all_cores.remove(course_code)
+	return list(set(all_cores) - set(courses_have_done))
+	 
+'''
+#test get remaining cores
+print(sort_courses(get_remaining_cores(3778,2019,'COMPA1',[])))
+print(sort_courses(get_remaining_cores(3778,2019,'COMPA1',['MATH1131','MATH1141'])))
+print(sort_courses(get_remaining_cores(3778,2019,'COMPA1',['MATH1131'])))
+'''
+#check if the course is valid course
+def is_valid_course(course_code):
+	#make the first 4 characters uppercase
+	course_code =  course_code.upper()
+	query = "SELECT * FROM COURSE WHERE course_code = ?"
+	payload = (course_code,)
+	results = dbselect(query, payload)
+	if results:
+		return True
+	return False
+'''
+#test is_valid_course
+print(is_valid_course('coMP1511'))
+print(is_valid_course('COMP511'))
+'''

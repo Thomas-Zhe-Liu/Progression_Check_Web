@@ -12,6 +12,4 @@ def get_core_courses(major_code, commence_year):
 		f_results.append(r[0])
 	return f_results
 
-#pass, program_code, commence_year and courses_have_done(course_code) to return a list of core_courses that should be dont later
-def get_remaining_cores(program_code, commence_year, major_code, courses_have_done):
-	return set(get_core_courses(major_code, commence_year)) - set(courses_have_done)
+
