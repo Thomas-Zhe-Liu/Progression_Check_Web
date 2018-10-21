@@ -5,6 +5,7 @@ import sqlite3
 import sys
 from selenium import webdriver
 import time
+from selenium.common.exceptions import NoSuchElementException
 
 # global url info I'll use
 hb_base = "https://www.handbook.unsw.edu.au"
@@ -412,6 +413,7 @@ def get_courses(course_links, flex):
             # already have this course object in the dict
             continue
 
+        print(course_code)
         # go to course page
         course_page = requests.get(course_link);
         course_soup = BeautifulSoup(course_page.content, 'html.parser')
@@ -459,20 +461,44 @@ def get_courses(course_links, flex):
 home_page = requests.get(hb_base)
 home_soup = BeautifulSoup(home_page.content, 'html.parser')
 subject_areas = home_soup.find("div", id="tab_educational_area")
+start = False;
 for subject in subject_areas.find_all("a", recursive=False):
     # just computer science for now
-    if re.match(r'/ComputerScience', subject['href']) is None:
+    
+    if re.match(r'/Aviation', subject['href']) or re.match(r'/Bioinformatics', subject['href']) or re.match(r'/DevelopmentStudies', subject['href']) is not None:
+        continue
+    if re.match(r'/ConstructionManagement', subject['href']) is not None:
         continue
 
+    if re.match(r'/ElectricalEngineering', subject['href']) is not None:
+        # that's enough courses
+        break
+
+    # skip to construction managament
+    if not start:
+        continue
+
+    print()
+    print()
+    print()
+    print(subject)
+    print()
+    print()
+    print()
     driver = webdriver.Chrome()
     driver.get(hb_base + subject['href'])
 
     # click undergrad course button to show all courses
     undergrad = driver.find_element_by_id("subjectUndergraduate")
-    while re.match(r'No', undergrad.find_element_by_class_name('a-browse-more-controls-btn').get_attribute('innerHTML')) is None:
-        element = undergrad.find_element_by_class_name('a-browse-more-controls-btn')
-        element.click()
-        time.sleep(2)
+
+    try:
+        while re.match(r'No', undergrad.find_element_by_class_name('a-browse-more-controls-btn').get_attribute('innerHTML')) is None:
+            element = undergrad.find_element_by_class_name('a-browse-more-controls-btn')
+            element.click()
+            time.sleep(3)
+    except NoSuchElementException as e:
+        time.sleep(3)
+        print("All good")
 
     subject_soup = BeautifulSoup(driver.page_source, features="lxml")
     ugrad_courses = subject_soup.find("div", id="subjectUndergraduate").find_all("a", recursive=False)
