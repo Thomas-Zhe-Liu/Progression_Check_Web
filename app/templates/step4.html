@@ -78,309 +78,47 @@
 
 <!-- #######################################################################################-->
 <h4>Year {{plan_year}}</h4>
-<table class="table">
-    <h5>Trimester 1</h5>
-  <thead>
-    <tr>
-      <th scope="col">Course Code</th>
-      <th scope="col">Name</th>
-      <th scope="col">UOC</th>
-      <th scope="col">Other terms offered in</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% set sem_count = 2 %}
-    {% for semester in schedule %}
-      {{sem_count}}
-    <tr>
-      <th scope="row">{{semester[0]}}</th>
-      <td>6</td>
-      <td>
-        <span class="badge badge-success">Sem1</span>
-        <span class="badge badge-warning">Sem2</span>
-        <span class="badge badge-warning">Sem3</span>
-        <span class="badge badge-info">Summer</span>
-      </td>
-      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-    </tr>
-    {% endfor %}  
-  </tbody>
-  </table>
+  <!-- begining of the block is hard coded-->
+  {% for semester in schedule %}
+     {% if (loop.index + plan_sem - 2) % 3 == 0 %}
+     <!-- reprinting the heading of the block-->
+      <h4>Year {{ (plan_year + (loop.index + plan_sem - 2)/3)|int }}</h4>
+     <!-- reprinting the heading of the block-->
+     {% endif %}
+    <table class="table">
+      <h5>Trimester {{(loop.index + plan_sem - 2) % 3 + 1 }}</h5>
+    <thead>
+      <tr>
+        <th scope="col">Course Code</th>
+        <th scope="col">Name</th>
+        <th scope="col">UOC</th>
+        <th scope="col">Other terms offered in</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for course in semester %}
+      <tr>
+        <th scope="row">{{course}}</th>
+        <td>Look up name here</td>
+        <td>6</td>
+        <td>
+          <span class="badge badge-success">Sem1</span>
+          <span class="badge badge-warning">Sem2</span>
+          <span class="badge badge-warning">Sem3</span>
+          <span class="badge badge-info">Summer</span>
+        </td>
+        <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
+      </tr>
+      {% endfor %}  
+    </tbody>
+    </table>
+  {% endfor %}  
+   
 
 
-<!-- #######################################################################################-->
-<h4>Year 1</h4>
-<table class="table">
-    <h5>Trimester 1</h5>
-  <thead>
-    <tr>
-      <th scope="col">Course Code</th>
-      <th scope="col">Name</th>
-      <th scope="col">UOC</th>
-      <th scope="col">Other terms offered in</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for course in remaining_core_all_info %}
-    <tr>
-      <th scope="row">{{course[0]}}</th>
-      <td>{{course[1]}}</td>
-      <td>6</td>
-      <td>
-        <span class="badge badge-success">Sem1</span>
-        <span class="badge badge-warning">Sem2</span>
-        <span class="badge badge-warning">Sem3</span>
-        <span class="badge badge-info">Summer</span>
-      </td>
-      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-    </tr>
-    {% endfor %}  
-  </tbody>
-  </table>
 
-  <!------------------------------------------------>
-<table class="table">
-    <h5>Trimester 2</h5>
-  <thead>
-    <tr>
-      <th scope="col">Course Code</th>
-      <th scope="col">Name</th>
-      <th scope="col">UOC</th>
-      <th scope="col">Other terms offered in</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for course in remaining_core_all_info %}
-    <tr>
-      <th scope="row">{{course[0]}}</th>
-      <td>{{course[1]}}</td>
-      <td>6</td>
-      <td>
-        <span class="badge badge-success">Sem1</span>
-        <span class="badge badge-warning">Sem2</span>
-        <span class="badge badge-warning">Sem3</span>
-        <span class="badge badge-info">Summer</span>
-      </td>
-      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-    </tr>
-    {% endfor %}  
-  </tbody>
-  </table>
 
-  <!------------------------------------------------>
-<table class="table">
-    <h5>Trimester 3</h5>
-  <thead>
-    <tr>
-      <th scope="col">Course Code</th>
-      <th scope="col">Name</th>
-      <th scope="col">UOC</th>
-      <th scope="col">Other terms offered in</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for course in remaining_core_all_info %}
-    <tr>
-      <th scope="row">{{course[0]}}</th>
-      <td>{{course[1]}}</td>
-      <td>6</td>
-      <td>
-        <span class="badge badge-success">Sem1</span>
-        <span class="badge badge-warning">Sem2</span>
-        <span class="badge badge-warning">Sem3</span>
-        <span class="badge badge-info">Summer</span>
-      </td>
-      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-    </tr>
-    {% endfor %}  
-  </tbody>
-  </table>
-
-<!-- #######################################################################################-->
-<h4>Year 2</h4>
-<table class="table">
-    <h5>Trimester 1</h5>
-  <thead>
-    <tr>
-      <th scope="col">Course Code</th>
-      <th scope="col">Name</th>
-      <th scope="col">UOC</th>
-      <th scope="col">Other terms offered in</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for course in remaining_core_all_info %}
-    <tr>
-      <th scope="row">{{course[0]}}</th>
-      <td>{{course[1]}}</td>
-      <td>6</td>
-      <td>
-        <span class="badge badge-success">Sem1</span>
-        <span class="badge badge-warning">Sem2</span>
-        <span class="badge badge-warning">Sem3</span>
-        <span class="badge badge-info">Summer</span>
-      </td>
-      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-    </tr>
-    {% endfor %}  
-  </tbody>
-  </table>
-
-  <!------------------------------------------------>
-<table class="table">
-    <h5>Trimester 2</h5>
-  <thead>
-    <tr>
-      <th scope="col">Course Code</th>
-      <th scope="col">Name</th>
-      <th scope="col">UOC</th>
-      <th scope="col">Other terms offered in</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for course in remaining_core_all_info %}
-    <tr>
-      <th scope="row">{{course[0]}}</th>
-      <td>{{course[1]}}</td>
-      <td>6</td>
-      <td>
-        <span class="badge badge-success">Sem1</span>
-        <span class="badge badge-warning">Sem2</span>
-        <span class="badge badge-warning">Sem3</span>
-        <span class="badge badge-info">Summer</span>
-      </td>
-      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-    </tr>
-    {% endfor %}  
-  </tbody>
-  </table>
-
-  <!------------------------------------------------>
-<table class="table">
-    <h5>Trimester 3</h5>
-  <thead>
-    <tr>
-      <th scope="col">Course Code</th>
-      <th scope="col">Name</th>
-      <th scope="col">UOC</th>
-      <th scope="col">Other terms offered in</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for course in remaining_core_all_info %}
-    <tr>
-      <th scope="row">{{course[0]}}</th>
-      <td>{{course[1]}}</td>
-      <td>6</td>
-      <td>
-        <span class="badge badge-success">Sem1</span>
-        <span class="badge badge-warning">Sem2</span>
-        <span class="badge badge-warning">Sem3</span>
-        <span class="badge badge-info">Summer</span>
-      </td>
-      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-    </tr>
-    {% endfor %}  
-  </tbody>
-  </table>
-
-  <!-- #######################################################################################-->
-<h4>Year 3</h4>
-<table class="table">
-    <h5>Trimester 1</h5>
-  <thead>
-    <tr>
-      <th scope="col">Course Code</th>
-      <th scope="col">Name</th>
-      <th scope="col">UOC</th>
-      <th scope="col">Other terms offered in</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for course in remaining_core_all_info %}
-    <tr>
-      <th scope="row">{{course[0]}}</th>
-      <td>{{course[1]}}</td>
-      <td>6</td>
-      <td>
-        <span class="badge badge-success">Sem1</span>
-        <span class="badge badge-warning">Sem2</span>
-        <span class="badge badge-warning">Sem3</span>
-        <span class="badge badge-info">Summer</span>
-      </td>
-      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-    </tr>
-    {% endfor %}  
-  </tbody>
-  </table>
-
-  <!------------------------------------------------>
-<table class="table">
-    <h5>Trimester 2</h5>
-  <thead>
-    <tr>
-      <th scope="col">Course Code</th>
-      <th scope="col">Name</th>
-      <th scope="col">UOC</th>
-      <th scope="col">Other terms offered in</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for course in remaining_core_all_info %}
-    <tr>
-      <th scope="row">{{course[0]}}</th>
-      <td>{{course[1]}}</td>
-      <td>6</td>
-      <td>
-        <span class="badge badge-success">Sem1</span>
-        <span class="badge badge-warning">Sem2</span>
-        <span class="badge badge-warning">Sem3</span>
-        <span class="badge badge-info">Summer</span>
-      </td>
-      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-    </tr>
-    {% endfor %}  
-  </tbody>
-  </table>
-
-  <!------------------------------------------------>
-<table class="table">
-    <h5>Trimester 3</h5>
-  <thead>
-    <tr>
-      <th scope="col">Course Code</th>
-      <th scope="col">Name</th>
-      <th scope="col">UOC</th>
-      <th scope="col">Other terms offered in</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for course in remaining_core_all_info %}
-    <tr>
-      <th scope="row">{{course[0]}}</th>
-      <td>{{course[1]}}</td>
-      <td>6</td>
-      <td>
-        <span class="badge badge-success">Sem1</span>
-        <span class="badge badge-warning">Sem2</span>
-        <span class="badge badge-warning">Sem3</span>
-        <span class="badge badge-info">Summer</span>
-      </td>
-      <td><button type="button" class="btn btn-outline-danger">View Course</button></td>
-    </tr>
-    {% endfor %}  
-  </tbody>
-  </table>
 </div>
       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#previousAlertModal">Previous</button>
       <button type="button" class="btn btn-success">Download PDF</button>

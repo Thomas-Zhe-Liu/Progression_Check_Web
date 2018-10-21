@@ -18,6 +18,11 @@ def plan_courses(schedule,remaining_courses, starting_semester):
 			schedule_count += 1
 			break
 	return schedule
+
+#delete the empty list in schedule
+def clean_planner(schedule):
+	new_schedule = [semetser for semetser in schedule if semetser != []]
+	return new_schedule
 '''
 #test plan_courses for core courses
 schedule = [[],[],[],[],[],[],[],[],[]]
@@ -31,4 +36,6 @@ specific_electives = determine_specific_electives(specific_elective_groups)
 print("specfic electives:" , specific_electives)
 schedule = plan_courses(schedule, specific_electives,2)
 print("schedule fore specific elective: ",schedule)
+#test for clean planner 
+print("cleaned planner: ",clean_planner(schedule))
 '''

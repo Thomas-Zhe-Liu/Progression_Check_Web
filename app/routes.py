@@ -149,14 +149,24 @@ def step4(program_code, commence_year, major, current_year, current_sem):
 	#sort the remaining course 
 	remaining_required_courses = get_remaining_cores(program_code, commence_year, major, selected_courses_code)
 	remaining_required_courses = sort_courses(remaining_required_courses)
-	#schedule based on remaining core course
-	schedule = plan_courses(schedule,remaining_required_courses, 2)
-	print(schedule)
 
 	#get the year of next planner trismester
 	plan_year = next_planner_year(current_year, current_sem)
 	#get the semester of next planner trismester
 	plan_sem = next_planner_semester(current_sem)
+	
+
+	#schedule based on remaining core course
+	schedule = plan_courses(schedule,remaining_required_courses, plan_sem)
+
+	specific_elective_groups = get_specific_elective_groups(current_year, major)
+	specific_electives = determine_specific_electives(specific_elective_groups)
+	print(specific_electives)
+	schedule = plan_courses(schedule, specific_electives,plan_sem)
+	
+	schedule = clean_planner(schedule)
+
+	print(schedule)
 
 	return render_template('step4.html', program_code = program_code, commence_year = commence_year, major = major, plan_year = plan_year, plan_sem = plan_sem, schedule = schedule)
 
