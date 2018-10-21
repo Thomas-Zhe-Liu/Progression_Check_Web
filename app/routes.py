@@ -158,17 +158,18 @@ def step4(program_code, commence_year, major, current_year, current_sem):
 
 	#schedule based on remaining core course
 	schedule = plan_courses(schedule,remaining_required_courses, plan_sem)
-
+	#schedule based on major specific electives
 	specific_elective_groups = get_specific_elective_groups(current_year, major)
 	specific_electives = determine_specific_electives(specific_elective_groups)
-	print(specific_electives)
 	schedule = plan_courses(schedule, specific_electives,plan_sem)
-	
 	schedule = clean_planner(schedule)
+	#get names for all the courses
+	schedule_with_name = []
+	for semester in schedule:
+		new_semester = get_course_list_with_name(semester)
+		schedule_with_name.append(new_semester)
 
-	print(schedule)
-
-	return render_template('step4.html', program_code = program_code, commence_year = commence_year, major = major, plan_year = plan_year, plan_sem = plan_sem, schedule = schedule)
+	return render_template('step4.html', program_code = program_code, commence_year = commence_year, major = major, plan_year = plan_year, plan_sem = plan_sem, schedule = schedule_with_name)
 
 @app.route('/register', methods=['GET','POST'])
 def register():
