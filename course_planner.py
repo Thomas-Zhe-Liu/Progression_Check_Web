@@ -39,3 +39,4 @@ print("schedule fore specific elective: ",schedule)
 #test for clean planner 
 print("cleaned planner: ",clean_planner(schedule))
 '''
+def fit_schedule_with_name(schedule_with_name, elective_uoc, gene_uoc, free_uoc)
