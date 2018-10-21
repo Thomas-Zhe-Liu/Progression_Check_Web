@@ -39,7 +39,6 @@ def load_user(id):
     cursor = connection.cursor()
     cursor.execute("SELECT z_id, password FROM user WHERE z_id = ?", (id,))
     data = cursor.fetchone()
-    print(data,'is data')
     if data is not None:
         user = Users(data[0],data[1])
         return user

@@ -81,7 +81,6 @@ def step2(program_code, commence_year, major, current_year, current_sem):
 			
 	return render_template('step2.html', program_code = program_code, commence_year = commence_year, major = major, selected_courses_code_name = selected_courses_code_name, error = error)
 
-
 #the system filter out from selected_courses_code, get lists: remaining_core_all_info , finished_electives, finished_genes, finished_free_electives
 @app.route('/step3/<program_code>/<commence_year>/<major>/<current_year>/<current_sem>', methods=["GET", "POST"])
 def step3(program_code, commence_year, major, current_year, current_sem):
@@ -92,42 +91,35 @@ def step3(program_code, commence_year, major, current_year, current_sem):
 	elective_uoc = get_elective_uoc(commence_year,major)
 	gene_uoc = get_gene_uoc(program_code, commence_year)
 	free_uoc = get_free_uoc(program_code, commence_year)
-	#specific_elective_UOC = get_specific_elective_UOC(commence_year, major_code)
-
-	elective_groups = get_specific_elective_groups(commence_year, major)
+	specific_uoc = 0
+	#get specific elective group
+	elective_groups= get_specific_elective_groups(commence_year, major)
 	
 	#iterate through each course_code in selected_course_code and determine whether this course is core, elective, general education or free elective
 	for course_code in selected_courses_code:
 		# it's a core and it is not excluded
-		if(is_core(program_code, commence_year, major, course_code) and not excluded(course_code, finished_cores)):			
-			if course_code not in finished_cores:				
-				finished_cores.append(course_code)
+		if(is_core(program_code, commence_year, major, course_code) and not excluded(course_code, finished_cores)):							
+			finished_cores.append(course_code)
 			continue
 		elif is_specific_elective(commence_year, course_code, elective_groups):
 			# do nothing, above function will modify the UOC in the appropriate group
-			if course_code not in finished_specific_electives:
-				finished_specific_electives.append(course_code) 
+			finished_specific_electives.append(course_code) 
 			continue
 		elif(is_elective(program_code, commence_year, major, course_code) and elective_uoc - 6 >= 0):
-			if course_code not in finished_electives:
-				elective_uoc -= 6
-				finished_electives.append(course_code)
+			elective_uoc -= 6
+			finished_electives.append(course_code)
 			continue
 		elif(is_gene(commence_year, course_code) and gene_uoc - 6 >= 0):
-			if course_code not in finished_genes:
-				finished_genes.append(course_code)
-				gene_uoc -= 6
+			#if course_code not in finished_genes:
+			finished_genes.append(course_code)
+			gene_uoc -= 6
 			continue
 		elif(free_uoc - 6 >= 0):
-			if course_code not in finished_free_electives:
-				finished_free_electives.append(course_code)
-				free_uoc -= 6
-
+			finished_free_electives.append(course_code)
+			free_uoc -= 6
 	# get the specific elective UOC remaining
-	specific_uoc = 0
 	for group in elective_groups:
 		specific_uoc += group.group_uoc
-
 	#######################################step4#####################################
 	if request.method == "POST":
 		if request.form["submit"] == "Continue":
@@ -137,7 +129,6 @@ def step3(program_code, commence_year, major, current_year, current_sem):
 	# sort the remainin_required_course based on their list
 	remaining_required_courses = sort_courses(remaining_required_courses)
 	#################################################################################################################
-	#pdf = weasyprint.HTML('http://localhost:5000/',program_code,'/',commence_year,'/',major).write_pdf('/tmp/example.pdf')
 	#create a new list that has the name of a course to display
 	remaining_core_all_info = get_course_list_with_name(remaining_required_courses)
 	finished_specific_electives_all_info = get_course_list_with_name(finished_specific_electives)
@@ -185,13 +176,9 @@ def step4(program_code, commence_year, major, current_year, current_sem, electiv
 def register():
 	form = RegisterForm()
 	if form.validate_on_submit():
-		#print('validated')
-		#   flash('validated')
 		conn = sqlite3.connect('Gradget.db')
 		cursor = conn.cursor()
 		cursor.execute("select * from USER where z_ID = ?", (form.zid.data,))
-
-		#cursor.execute("select * from USER")
 
 		user = cursor.fetchone()
 		print(user)
@@ -218,8 +205,6 @@ def login():
 			return redirect(url_for('login'))
 
 		login_user(user)
-		print('logged in as ', user.z_id)
-		print('current user is ', current_user.z_id)
 		flash('You have been successfully logged in', current_user.z_id)
 
 		return redirect(url_for('index'))
@@ -231,13 +216,13 @@ def logout():
 	logout_user()
 	flash('You have been successfully logged out')
 	#clean all the list
-	selected_courses_code = []
-	selected_courses_code_name = []
-	finished_electives = []
-	finished_genes = []
-	finished_free_electives = []
-	finished_cores = []
-	finished_specific_electives = []
+	selected_courses_code[:] = []
+	selected_courses_code_name[:] = []
+	finished_electives[:] = []
+	finished_genes[:] = []
+	finished_free_electives[:] = []
+	finished_cores[:] = []
+	finished_specific_electives[:] = []
 	return redirect(url_for('index'))
 
 

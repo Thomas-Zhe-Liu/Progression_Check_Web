@@ -74,7 +74,6 @@ def is_gene(commence_year, course_code):
 	if len(results) == 0:
 		# invalid course
 		return False
-
 	# no loop needed as only one entry per course
 	if results[0][-1] == 1:
 		return True

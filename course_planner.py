@@ -3,7 +3,6 @@ from major import *
 def plan_courses(schedule,remaining_courses, starting_semester):
 	#schedule is a list of semetsers that contains 3 courses maximum, 9 elements in total as the whole degree will be 3 years maximum
 	for course_code in remaining_courses:
-		#print("curr course: " + course_code)
 		offered_semesters = get_offered_semesters(course_code)
 		#1 means offerd, 0 vice versa
 		schedule_count = starting_semester - 1
@@ -42,7 +41,7 @@ def fit_schedule_with_name(schedule_with_name, elective_uoc, gene_uoc, free_uoc)
 				semetser.append(['COMPXXXX', 'COMP ELECTIVE'])
 			elif(gene_uoc > 0):
 				gene_uoc -= 6
-				semetser.append(['GENEXXXX', 'GEBERAL EDUCATION'])
+				semetser.append(['GENEXXXX', 'GENERAL EDUCATION'])
 			elif(free_uoc > 0):
 				free_uoc -= 6
 				semetser.append(['FREEXXXX', 'FREE ELECTIVE'])

@@ -45,10 +45,8 @@ def get_elective_uoc(commence_year, major_code):
 
 	return uoc_sum
 
-'''
-	Return an array of class elective group for each specific elective
-	group listed on the major's handbook page
-'''
+	
+#Return an array of class elective group for each specific elective group listed on the major's handbook page
 def get_specific_elective_groups(commence_year, major_code):
 	query = "SELECT course_code, course_amount, group_id UOC FROM MAJOR_REQUIRED_ELECTIVE_SPECIFIC WHERE major_code = ? ORDER BY group_id"
 	payload = (major_code,)
@@ -72,10 +70,10 @@ def get_specific_elective_groups(commence_year, major_code):
 
 	return elective_groups
 
-'''
-	This function will check if the course is in an elective group
-	If so, subtract course uoc from that elective group , and removed the course
-'''
+
+	
+#This function will check if the course is in an elective group
+#If so, subtract course uoc from that elective group , and removed the course
 def is_specific_elective(commence_year, course, elective_groups):
 	for group in elective_groups:
 		if course in group.group_course_list and group.group_uoc > 0:
