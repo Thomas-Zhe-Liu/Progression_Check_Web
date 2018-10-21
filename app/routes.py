@@ -66,7 +66,7 @@ def step2(program_code, commence_year, major, current_year, current_sem):
 
 #########################################step3 preperation##########################################################
 		#this post request is to progress to step 3 after all the courses have done are input
-		if request.form["submit"] == "continue":
+		if request.form["submit"] == "Continue":
 			return redirect(url_for("step3", program_code=program_code, commence_year=commence_year, major=major, current_year = current_year, current_sem = current_sem))
 ####################################################################################################################
 	# selected_courses_code_name append code and course_name
@@ -133,7 +133,7 @@ def step3(program_code, commence_year, major, current_year, current_sem):
 
 	#######################################step4#####################################
 	if request.method == "POST":
-		if request.form["submit"] == "continue":
+		if request.form["submit"] == "Continue":
 			return redirect(url_for("step4", program_code=program_code, commence_year=commence_year, major=major, current_year = current_year, current_sem = current_sem, elective_uoc = elective_uoc, free_uoc = free_uoc, gene_uoc = gene_uoc))
 	#get all the remaining course code
 	remaining_required_courses = get_remaining_cores(program_code, commence_year, major, selected_courses_code)
@@ -233,6 +233,14 @@ def login():
 def logout():
 	logout_user()
 	flash('You have been successfully logged out')
+	#clean all the list
+	selected_courses_code = []
+	selected_courses_code_name = []
+	finished_electives = []
+	finished_genes = []
+	finished_free_electives = []
+	finished_cores = []
+	finished_specific_electives = []
 	return redirect(url_for('index'))
 
 

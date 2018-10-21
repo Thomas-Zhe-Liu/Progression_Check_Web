@@ -35,12 +35,3 @@ def next_planner_semester(current_semester):
 		return 1
 	return (current_semester + 1)
 
-'''
-#test for next_planner_year
-print(next_planner_year(2019, 2))
-print(next_planner_year(2019, 3))
-
-#test for next_planner_semester
-print(next_planner_semester(1))
-print(next_planner_semester(3))
-'''
