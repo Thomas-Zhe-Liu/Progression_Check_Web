@@ -58,14 +58,16 @@ selected_courses_code = []
 selected_courses_code_name = []
 @app.route('/step2/<program_code>/<commence_year>/<major>/<current_year>/<current_sem>', methods=["GET", "POST"])
 def step2(program_code, commence_year, major, current_year, current_sem):
+	#initalize a empty error
+	error = None
 	if request.method == "POST":
 #########################################step2 preperation##########################################################
 		#this post request is for adding courses
 		if request.form["submit"] == "add":
-			#get program_code form request.form, need error handling
-			program_code = request.form["p_code"]
-			if(program_code == "COMP9999"):
-				flash('Not a valid course, please enter again')
+			#get program_code form request.form, make the first 4 characters uppercase
+			program_code = request.form["p_code"].upper()
+			if(not is_valid_course(program_code)):
+				error = "Invalid Course, please re-enter the course code :)"
 			#check if the same code has been input before already
 			elif program_code not in selected_courses_code:
 				selected_courses_code.append(program_code)
@@ -83,7 +85,7 @@ def step2(program_code, commence_year, major, current_year, current_sem):
 		if [code, course_name] not in selected_courses_code_name:
 			selected_courses_code_name.append([code, course_name])
 			
-	return render_template('step2.html', program_code = program_code, commence_year = commence_year, major = major, selected_courses_code_name = selected_courses_code_name)
+	return render_template('step2.html', program_code = program_code, commence_year = commence_year, major = major, selected_courses_code_name = selected_courses_code_name, error = error)
 
 
 #initilize 3 lists in accordance to let the courses being filtered be appended into a  list
@@ -132,21 +134,15 @@ def step3(program_code, commence_year, major, current_year, current_sem):
 			return redirect(url_for("step4", program_code=program_code, commence_year=commence_year, major=major, current_year = current_year, current_sem = current_sem))
 	#get all the remaining course code
 	remaining_required_courses = get_remaining_cores(program_code, commence_year, major, selected_courses_code)
-	print("1")
 	# sort the remainin_required_course based on their list
 	remaining_required_courses = sort_courses(remaining_required_courses)
-	print("2")
 	#################################################################################################################
 	#pdf = weasyprint.HTML('http://localhost:5000/',program_code,'/',commence_year,'/',major).write_pdf('/tmp/example.pdf')
 	#create a new list that has the name of a course to display
 	remaining_core_all_info = get_course_list_with_name(remaining_required_courses)
-	print("3")
 	finished_electives_all_info = get_course_list_with_name(finished_electives)
-	print("4")
 	finished_genes_all_info = get_course_list_with_name(finished_genes)
-	print("5")
 	finished_free_electives_all_info = get_course_list_with_name(finished_free_electives)
-	print("6")
 	
 	return render_template('step3.html', program_code = program_code, commence_year = commence_year, major = major, remaining_core_all_info = remaining_core_all_info, elective_uoc = elective_uoc, free_uoc = free_uoc, gene_uoc = gene_uoc, finished_electives_all_info = finished_electives_all_info, finished_genes_all_info = finished_genes_all_info, finished_free_electives_all_info = finished_free_electives_all_info)
 

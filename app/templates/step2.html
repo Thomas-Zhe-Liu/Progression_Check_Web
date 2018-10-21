@@ -76,6 +76,9 @@
     <div class="form-group">   
       <input class="form-control" placeholder="Search for Courses" type="text" name ='p_code'>
     </div>
+    {%if error%}
+      <span style="font-weight: bold; font-size: 1.5em;">{{error}}</span>
+    {%endif%}
     <!-- <button type="submit" class="btn btn-success">Add</button> -->
     <input type="submit" class= "btn btn-primary pull-right" name="submit" value="add"/>
 

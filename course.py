@@ -166,8 +166,6 @@ print(sort_courses(get_remaining_cores(3778,2019,'COMPA1',['MATH1131'])))
 '''
 #check if the course is valid course
 def is_valid_course(course_code):
-	#make the first 4 characters uppercase
-	course_code =  course_code.upper()
 	query = "SELECT * FROM COURSE WHERE course_code = ?"
 	payload = (course_code,)
 	results = dbselect(query, payload)
@@ -176,6 +174,6 @@ def is_valid_course(course_code):
 	return False
 '''
 #test is_valid_course
-print(is_valid_course('coMP1511'))
+print(is_valid_course('comp1531'))
 print(is_valid_course('COMP511'))
 '''
