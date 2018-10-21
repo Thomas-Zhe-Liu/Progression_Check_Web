@@ -11,8 +11,16 @@ from course_planner import *
 from app.models import Users
 from app.forms import RegisterForm, LoginForm
 from flask_login import current_user, logout_user, login_user, login_required, login_manager
-
-
+#this list will be used throughout the process
+selected_courses_code = []
+#this list is for step 2 to display the slected course only
+selected_courses_code_name = []
+#initilize 4 lists in accordance to let the courses being filtered be appended into a  list in step 3
+finished_electives = []
+finished_genes = []
+finished_free_electives = []
+finished_cores = []
+finished_specific_electives = []
 
 #@app.route("/", methods=["GET", "POST"])
 @app.route('/')
@@ -42,11 +50,6 @@ def step1():
 
 
 
-#need to justify having this 2 variable out here again later
-#this list will be used throughout the process
-selected_courses_code = []
-#this list is for step 2 to display the slected course only
-selected_courses_code_name = []
 @app.route('/step2/<program_code>/<commence_year>/<major>/<current_year>/<current_sem>', methods=["GET", "POST"])
 def step2(program_code, commence_year, major, current_year, current_sem):
 	#initalize a empty error
@@ -56,12 +59,12 @@ def step2(program_code, commence_year, major, current_year, current_sem):
 		#this post request is for adding courses
 		if request.form["submit"] == "add":
 			#get program_code form request.form, make the first 4 characters uppercase
-			program_code = request.form["p_code"].upper()
-			if(not is_valid_course(program_code)):
+			course_code = request.form["p_code"].upper()
+			if(not is_valid_course(course_code)):
 				error = "Invalid Course, please re-enter the course code :)"
 			#check if the same code has been input before already
-			elif program_code not in selected_courses_code:
-				selected_courses_code.append(program_code)
+			elif course_code not in selected_courses_code:
+				selected_courses_code.append(course_code)
 ####################################################################################################################
 
 #########################################step3 preperation##########################################################
@@ -79,12 +82,6 @@ def step2(program_code, commence_year, major, current_year, current_sem):
 	return render_template('step2.html', program_code = program_code, commence_year = commence_year, major = major, selected_courses_code_name = selected_courses_code_name, error = error)
 
 
-#initilize 3 lists in accordance to let the courses being filtered be appended into a  list
-finished_electives = []
-finished_genes = []
-finished_free_electives = []
-finished_cores = []
-finished_specific_electives = []
 #the system filter out from selected_courses_code, get lists: remaining_core_all_info , finished_electives, finished_genes, finished_free_electives
 @app.route('/step3/<program_code>/<commence_year>/<major>/<current_year>/<current_sem>', methods=["GET", "POST"])
 def step3(program_code, commence_year, major, current_year, current_sem):
